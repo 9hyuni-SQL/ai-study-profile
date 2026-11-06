@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d19">
+  <meta name="description" content="AI를 배우며 아이디어를 만들고 새로운 가능성을 탐구하는 송구현의 작은 온라인 공간입니다.">
+  <title>송구현의 AI 수업 기록 — 별이 빛나는 학습 공간</title>
+  <link rel="stylesheet" href="style.css?v=korean-audio-cleanup-20261104">
+</head>
+<body>
+  <div class="meteor-field" aria-hidden="true">
+    <span class="meteor"></span>
+    <span class="meteor"></span>
+    <span class="meteor"></span>
+    <span class="meteor"></span>
+    <span class="meteor"></span>
+  </div>
+  <main class="page-shell">
+    <header class="topbar" aria-label="페이지 메뉴">
+      <a class="wordmark" href="#home" aria-label="송구현 홈"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 14.3 9l6.8.3-5.3 4.3 1.8 6.5-5.6-3.8-5.6 3.8 1.8-6.5-5.3-4.3L9.7 9z"/></svg></span><span class="brand-name">SONG<span> / </span>AI LAB</span></a>
+      <nav class="quick-nav" aria-label="빠른 메뉴">
+        <a href="#community">커뮤니티</a>
+        <a class="top-link" href="#music">배경음악 <span aria-hidden="true">♫</span></a>
+        <button class="auth-open" id="auth-open" type="button">로그인 / 회원가입</button>
+        <div class="auth-menu" id="auth-menu" hidden>
+          <span class="auth-user" id="auth-user"></span>
+          <button class="auth-menu-button" id="auth-signup" data-auth-mode="register" type="button">회원가입</button>
+          <button class="auth-menu-button" id="auth-login" data-auth-mode="login" type="button">로그인</button>
+          <button class="auth-menu-button" id="view-my-posts" type="button" hidden>내가 쓴 글</button>
+          <button class="auth-menu-button" id="auth-logout" data-auth-mode="logout" type="button" hidden>로그아웃</button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="music-credit"><a href="https://pixabay.com/music/main-title-anime-piano-1-125502/" target="_blank" rel="noopener noreferrer">Anime Piano 1 · 3AMAudio (Pixabay)</a> · <a href="https://pixabay.com/service/license-summary/" target="_blank" rel="noopener noreferrer">사용 라이선스</a></div>
+    <div class="space-audio" id="music" aria-label="애니메이션풍 피아노 배경음악 플레이어">
+      <span class="audio-indicator" id="audio-indicator" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <button class="audio-toggle" id="audio-toggle" type="button" aria-pressed="false" aria-label="배경음악 재생 또는 정지">Anime Piano 1 재생</button>
+      <label class="visually-hidden" for="audio-volume">배경음악 음량</label>
+      <input class="audio-volume" id="audio-volume" type="range" min="0" max="0.5" step="0.01" value="0.42" aria-label="배경음악 음량">
+      <span class="audio-caption" id="audio-caption">Pixabay 라이선스 · 3AMAudio</span>
+    </div>
+
+    <section class="galaxy-banner" role="img" aria-label="푸른 별과 성운이 흐르는 은하수 풍경">
+      <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="galaxy-sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#090f26"/><stop offset=".48" stop-color="#151b49"/><stop offset="1" stop-color="#091523"/></linearGradient>
+          <linearGradient id="galaxy-ribbon" x1="0" y1=".1" x2="1" y2=".85"><stop stop-color="#637cf4" stop-opacity="0"/><stop offset=".35" stop-color="#b2abff" stop-opacity=".5"/><stop offset=".57" stop-color="#81ddfa" stop-opacity=".84"/><stop offset=".76" stop-color="#a7a8ff" stop-opacity=".48"/><stop offset="1" stop-color="#425ed7" stop-opacity="0"/></linearGradient>
+          <radialGradient id="nebula-glow"><stop stop-color="#79d9ff" stop-opacity=".53"/><stop offset="1" stop-color="#826aff" stop-opacity="0"/></radialGradient>
+          <filter id="galaxy-blur"><feGaussianBlur stdDeviation="23"/></filter>
+        </defs>
+        <rect width="1200" height="300" fill="url(#galaxy-sky)"/>
+        <ellipse cx="305" cy="183" rx="240" ry="113" fill="url(#nebula-glow)" filter="url(#galaxy-blur)"/>
+        <ellipse cx="922" cy="90" rx="218" ry="108" fill="url(#nebula-glow)" filter="url(#galaxy-blur)"/>
+        <path d="M-80 253C121 83 284 267 479 141S812 34 1019 149s295 56 361-15" fill="none" stroke="url(#galaxy-ribbon)" stroke-width="83" opacity=".8" filter="url(#galaxy-blur)"/>
+        <path d="M-40 236C133 97 293 264 493 143S818 47 1019 153s277 50 324-6" fill="none" stroke="url(#galaxy-ribbon)" stroke-width="30" opacity=".56"/>
+        <g fill="#f3f8ff"><circle cx="82" cy="51" r="1.6"/><circle cx="161" cy="151" r="1"/><circle cx="252" cy="62" r="1.2"/><circle cx="340" cy="224" r="1.5"/><circle cx="433" cy="40" r="1"/><circle cx="520" cy="202" r="1.2"/><circle cx="612" cy="65" r="1.5"/><circle cx="703" cy="237" r="1"/><circle cx="792" cy="50" r="1.2"/><circle cx="884" cy="211" r="1.5"/><circle cx="986" cy="42" r="1"/><circle cx="1087" cy="210" r="1.3"/><circle cx="1160" cy="77" r="1.5"/></g>
+        <g fill="#8ce7ff"><circle cx="207" cy="105" r="1.6"/><circle cx="571" cy="120" r="1.4"/><circle cx="765" cy="128" r="1.8"/><circle cx="1047" cy="110" r="1.6"/></g>
+      </svg>
+      <div class="galaxy-caption"><span>DEEP SPACE</span><span>작은 발견들이 모여 하나의 은하가 됩니다</span></div>
+    </section>
+
+    <section class="profile" id="home" aria-labelledby="profile-name">
+      <div class="hero-kicker"><span class="live-dot"></span> AI LEARNING · CURIOSITY IN ORBIT</div>
+      <div class="avatar-wrap" aria-label="별이 빛나는 우주 속 AI 신경망 아이콘">
+        <div class="avatar-orbit orbit-one"></div>
+        <div class="avatar-orbit orbit-two"></div>
+        <div class="avatar-art"><svg viewBox="0 0 64 64" role="img" aria-label="AI 신경망"><path d="M32 10v11M32 43v11M10 32h11M43 32h11M16.5 16.5l8 8M39.5 39.5l8 8M47.5 16.5l-8 8M24.5 39.5l-8 8"/><circle cx="32" cy="32" r="12"/><circle cx="32" cy="32" r="4"/><circle cx="32" cy="9" r="2"/><circle cx="32" cy="55" r="2"/><circle cx="9" cy="32" r="2"/><circle cx="55" cy="32" r="2"/></svg></div>
+        <span class="avatar-sparkle sparkle-one" aria-hidden="true">+</span>
+        <span class="avatar-sparkle sparkle-two" aria-hidden="true">.</span>
+      </div>
+      <div class="location"><span class="location-dot"></span> 지금, AI 수업을 듣고 있어요</div>
+      <h1 id="profile-name">안녕하세요, <span>송구현</span>입니다<span class="title-period">.</span></h1>
+      <p class="bio">AI와 함께 배우고, 작은 아이디어를 직접 만들어 봅니다.<br>새롭게 발견한 것들을 별처럼 이곳에 차곡차곡 모으고 있어요.</p>
+    </div>
+
+    <section class="community-section" id="community" aria-label="커뮤니티">
+      <div class="section-heading"><span>함께 배우는 공간</span><span class="heading-line"></span><span class="link-count">COMMUNITY</span></div>
+      <nav class="community-tabs" aria-label="커뮤니티 게시판">
+        <a class="community-tab is-active" href="#board" aria-current="location"><span class="tab-icon">✳</span><span>가입인사</span><span class="tab-description">서로 인사 나누기</span><span class="link-arrow">›</span></a>
+        <a class="community-tab" href="#qa-board"><span class="tab-icon">?</span><span>AI Q&amp;A</span><span class="tab-description">질문하고 답변하기</span><span class="link-arrow">›</span></a>
+      </nav>
+    </section>
+
+    <div class="auth-panel" id="auth-panel" aria-labelledby="auth-title" hidden>
+      <div class="auth-panel-heading">
+        <h2 id="auth-title">회원가입</h2>
+        <button class="auth-close" id="auth-close" type="button" aria-label="닫기">×</button>
+      </div>
+      <p class="auth-description">가입하면 인사와 질문을 남기고, 내가 쓴 글을 관리할 수 있어요.</p>
+      <form id="auth-form">
+        <label class="field-label" for="auth-email">이메일</label>
+        <input id="auth-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required>
+        <label class="field-label" for="auth-password">비밀번호</label>
+        <input id="auth-password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8자 이상 입력해 주세요" required>
+        <div class="auth-nickname-field" id="auth-nickname-field">
+          <label class="field-label" for="auth-nickname">닉네임</label>
+          <input id="auth-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="게시판에서 사용할 이름" required>
+        </div>
+        <p class="auth-notice" id="auth-notice" role="status" aria-live="polite"></p>
+        <button class="submit-post auth-submit" id="auth-submit" type="submit">회원가입</button>
+      </form>
+      <p class="auth-switch" id="auth-switch"></p>
+      <button class="auth-switch-button" id="auth-switch-button" type="button">이미 가입했다면 로그인</button>
+    </section>
+
+    <section class="links-section" aria-labelledby="links-heading">
+      <div class="section-heading"><span id="links-heading">AI STUDY LINKS</span><span class="heading-line"></span><span class="link-count">05</span></div>
+      <nav class="link-list" aria-label="송구현의 AI 링크">
+        <a class="link-card link-featured" href="#qa-board"><span class="link-icon icon-sun"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/></svg></span><span class="link-copy"><strong>AI에게 궁금한 것 물어보기</strong><small>수업 질문을 남기고 답을 함께 찾아요</small></span><span class="link-arrow">›</span></a>
+        <a class="link-card" href="https://www.google.com/search?q=%EC%83%9D%EC%84%B1%ED%98%95+AI" target="_blank" rel="noopener noreferrer"><span class="link-icon icon-camera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M17.5 6.5 19 5"/></svg></span><span class="link-copy"><strong>생성형 AI 둘러보기</strong><small>요즘 새롭게 배우는 인공지능 이야기</small></span><span class="link-arrow">↗</span></a>
+        <a class="link-card" href="https://www.google.com/search?q=AI+%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8+%EA%B0%80%EC%9D%B4%EB%93%9C" target="_blank" rel="noopener noreferrer"><span class="link-icon icon-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 7.3 3.2l12.2 7a2.1 2.1 0 0 1 0 3.6l-12.2 7A1.5 1.5 0 0 1 5 19.5z"/></svg></span><span class="link-copy"><strong>오늘의 AI 학습 노트</strong><small>질문하고 실습하면서 배우는 기록</small></span><span class="link-arrow">↗</span></a>
+        <a class="link-card" href="#board"><span class="link-icon icon-mail"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14A2.5 2.5 0 0 1 21.5 7v10a2.5 2.5 0 0 1-2.5 2.5H5A2.5 2.5 0 0 1 2.5 17V7A2.5 2.5 0 0 1 5 4.5Z"/><path d="m3.5 6 8.5 7 8.5-7"/></svg></span><span class="link-copy"><strong>서로 반갑게 인사하기</strong><small>AI 수업 동료들의 가입인사 모음</small></span><span class="link-arrow">›</span></a>
+        <a class="link-card" href="#favorites"><span class="link-icon icon-heart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16M6 16V8m6 8V4m6 12v-5M4 8h4m2-4h4m2 7h4M6 16h12"/></svg></span><span class="link-copy"><strong>작은 아이디어 실험실</strong><small>AI로 만들고 싶은 것들을 모아요</small></span><span class="link-arrow">›</span></a>
+      </nav>
+    </section>
+
+
+
+    <section class="board-section" id="board" aria-labelledby="board-heading">
+      <div class="section-heading"><span id="board-heading">가입인사</span><span class="heading-line"></span><span class="link-count">함께 배우는 분들</span></div>
+      <p class="board-intro">AI 수업에서 만난 분들의 가입 인사를 모았어요. 저도 반가운 마음을 댓글로 남겼습니다.</p>
+
+      <form class="board-composer" id="post-form">
+        <label class="field-label" for="nickname">닉네임</label>
+        <input id="nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="어떻게 불러드릴까요?" required>
+        <label class="field-label" for="post-content">오늘의 한마디</label>
+        <textarea id="post-content" name="content" maxlength="1000" rows="4" placeholder="AI 수업에서 배우고 있는 내용이나 궁금한 점을 남겨주세요." required></textarea>
+      <div class="composer-footer"><span class="character-hint" id="post-auth-hint">로그인하면 가입인사를 남길 수 있어요.</span><button class="submit-post" id="submit-post" type="submit">글 남기기 <span aria-hidden="true">↗</span></button></div>
+      </form>
+
+      <div class="board-toolbar">
+        <span id="post-count">새로운 인사를 기다리는 중</span>
+        <button class="refresh-posts" id="refresh-posts" type="button" aria-label="게시글 새로고침">새로고침 ↻</button>
+      </div>
+      <p class="board-status" id="board-status" role="status" aria-live="polite"></p>
+      <ol class="post-list" id="post-list" aria-label="방명록 게시글 목록"></ol>
+        <p class="board-status" id="comment-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="board-section qa-section" id="qa-board" aria-labelledby="qa-heading">
+      <div class="section-heading"><span id="qa-heading">궁금한 걸 물어보세요</span><span class="heading-line"></span><span class="link-count">AI Q&amp;A</span></div>
+      <p class="board-intro">AI 수업 중 궁금했던 점을 질문하고, 댓글로 답변과 경험을 나눠보세요.</p>
+
+      <form class="board-composer" id="question-form">
+        <label class="field-label" for="question-nickname">닉네임</label>
+        <input id="question-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="닉네임을 입력해 주세요" required>
+        <label class="field-label" for="question-title">질문 제목</label>
+        <input id="question-title" name="title" type="text" maxlength="120" placeholder="무엇이 궁금한가요?" required>
+        <label class="field-label" for="question-content">질문 내용</label>
+        <textarea id="question-content" name="content" maxlength="2000" rows="4" placeholder="상황이나 시도해 본 방법도 함께 적어주시면 좋아요." required></textarea>
+        <div class="composer-footer"><span class="character-hint" id="question-auth-hint">로그인 후 질문을 남길 수 있어요.</span><button class="submit-post" id="submit-question" type="submit">질문 등록 <span aria-hidden="true">↗</span></button></div>
+      </form>
+
+      <div class="board-toolbar">
+        <span id="question-count">질문을 불러오는 중</span>
+        <button class="refresh-posts" id="refresh-questions" type="button" aria-label="질문 목록 새로고침">새로고침 ↻</button>
+      </div>
+      <p class="board-status" id="question-status" role="status" aria-live="polite"></p>
+      <ol class="post-list" id="question-list" aria-label="AI 질문 목록"></ol>
+    </section>
+
+    <section class="note-card" id="favorites" aria-label="좋아하는 것들">
+      <div class="note-top"><span class="note-label">AI LAB / NOW LEARNING</span><span class="note-flower" aria-hidden="true">01</span></div>
+      <p>AI와 함께라면<br>작은 아이디어도 새로운 궤도가 됩니다.</p>
+      <span class="note-caption">수업에서 배운 것을 하나씩 직접 만들어 보는 중</span>
+    </section>
+
+    <footer class="footer" id="contact">
+      <span class="footer-heart" aria-hidden="true">●</span><span>AI를 배우며 발견한 작은 가능성을 기록합니다.</span>
+      <span class="footer-credit">SONG GU HYEON <span aria-hidden="true">/</span> LEARNING AI, ONE IDEA AT A TIME</span>
+    </footer>
+  </main>
+  <script src="space-audio.js?v=korean-audio-cleanup-20261104"></script>
+  <script src="script.js?v=korean-audio-cleanup-20261104"></script>
+</body>
+</html>
