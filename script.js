@@ -22,8 +22,11 @@ const submitPost = document.getElementById("submit-post");
 const refreshPosts = document.getElementById("refresh-posts");
 const commentStatus = document.getElementById("comment-status");
 const questionNicknameField = document.getElementById("question-nickname");
+const questionAiToolField = document.getElementById("question-ai-tool");
 const questionTitleField = document.getElementById("question-title");
 const questionContentField = document.getElementById("question-content");
+const questionAnswerField = document.getElementById("question-answer");
+const questionCheckField = document.getElementById("question-check");
 const questionList = document.getElementById("question-list");
 const questionCount = document.getElementById("question-count");
 const questionStatus = document.getElementById("question-status");
@@ -47,10 +50,103 @@ const authLogout = document.getElementById("auth-logout");
 const postAuthHint = document.getElementById("post-auth-hint");
 const questionAuthHint = document.getElementById("question-auth-hint");
 const viewMyPosts = document.getElementById("view-my-posts");
+const fieldNotesInput = document.getElementById("field-notes-input");
+const converterStatus = document.getElementById("converter-status");
+const sopResultWrap = document.getElementById("sop-result-wrap");
+const sopOutput = document.getElementById("sop-output");
+const convertNotesButton = document.getElementById("convert-notes");
+const sendToVerificationButton = document.getElementById("send-to-verification");
 
 let currentUser = null;
 let authMode = "register";
 let showingMyPosts = false;
+let currentFieldNoteTitle = "현장 노하우 정리";
+
+const buildVerificationContent = ({ aiTool, promptText, answerText, checkText }) =>
+  `사용한 AI: ${aiTool}\n\n내 질문:\n${promptText}\n\nAI 답변:\n${answerText}\n\n함께 확인할 점:\n${checkText}`;
+
+const fieldNotePresets = {
+  quality: {
+    title: "동절기 표면 크랙 방지",
+    text: "겨울철 소재가 차가우면 바로 강하게 가공하지 않는다. 작업 전 소재 온도와 표면 상태를 확인한다. 이상 징후가 보이면 공정을 멈추고 품질 담당자와 기준을 확인한다.",
+  },
+  sales: {
+    title: "납품 단가 협상 준비",
+    text: "협상 전에 원가와 납기 조건을 확인한다. 고객이 중요하게 보는 품질과 일정을 먼저 듣는다. 가격 조정은 수량과 납기 등 조건을 함께 검토하고 합의 내용을 문서로 남긴다.",
+  },
+  team: {
+    title: "후배 작업자와 안전 대화",
+    text: "작업 시작 전에 오늘 공정의 위험 요소를 함께 확인한다. 작업자가 이해한 내용을 자기 말로 설명하도록 돕는다. 모르는 점이나 위험을 발견하면 작업을 멈추고 담당자와 함께 확인한다.",
+  },
+};
+
+document.querySelectorAll(".note-preset").forEach((button) => {
+  button.addEventListener("click", () => {
+    const preset = fieldNotePresets[button.dataset.preset];
+    if (!preset) return;
+    currentFieldNoteTitle = preset.title;
+    fieldNotesInput.value = preset.text;
+    document.querySelectorAll(".note-preset").forEach((item) => item.classList.toggle("is-active", item === button));
+    sopResultWrap.hidden = true;
+    converterStatus.textContent = `${preset.title} 예시를 불러왔어요. 실제 현장에 맞게 수정해 주세요.`;
+    fieldNotesInput.focus();
+  });
+});
+
+convertNotesButton.addEventListener("click", () => {
+  const rawNotes = fieldNotesInput.value.trim();
+  if (!rawNotes) {
+    converterStatus.textContent = "현장 메모를 입력하거나 예시를 선택해 주세요.";
+    fieldNotesInput.focus();
+    return;
+  }
+  const steps = rawNotes.split(/[\n;]+/).map((line) => line.trim().replace(/^[•·\-–\d.)\s]+/, "")).filter(Boolean).slice(0, 5);
+  const procedure = steps.length ? steps.map((step, index) => `${index + 1}. ${step}`).join("\n") : `1. ${rawNotes}`;
+  const draft = [
+    "[표준작업절차(SOP) 초안 · 검토 전]",
+    `작업명: ${currentFieldNoteTitle}`,
+    "",
+    "1. 목적과 적용 상황",
+    `- ${rawNotes.slice(0, 150)}`,
+    "",
+    "2. 작업 전 확인",
+    "- 작업 대상, 설비 상태, 보호구와 현행 사내 기준을 담당자와 함께 확인합니다.",
+    "",
+    "3. 현장 메모 기반 작업 순서",
+    procedure,
+    "",
+    "4. 품질·안전 및 이상 대응",
+    "- 현행 작업표준과 안전수칙을 대조합니다. 이상 징후가 있으면 작업을 멈추고 담당자에게 보고합니다.",
+    "",
+    "5. 검토 전 확인사항",
+    "- 수치, 설비 조건, 책임자와 비상 절차를 현장 기준으로 확인하고 승인받으세요.",
+  ].join("\n");
+  if (draft.length > 1000) {
+    converterStatus.textContent = "초안이 1,000자를 넘었어요. 핵심 단계만 남겨 간결하게 정리해 주세요.";
+    return;
+  }
+  sopOutput.textContent = draft;
+  sopResultWrap.hidden = false;
+  converterStatus.textContent = "메모를 SOP 양식으로 정리했어요. 실제 AI 분석이나 안전 검증은 아니므로 현장 기준을 확인해 주세요.";
+});
+
+sendToVerificationButton.addEventListener("click", () => {
+  const notes = fieldNotesInput.value.trim();
+  const draft = sopOutput.textContent.trim();
+  if (!notes || !draft) {
+    converterStatus.textContent = "먼저 현장 메모를 입력하고 SOP 초안을 만들어 주세요.";
+    return;
+  }
+  const toolName = "SENIOR AI 현장수첩 변환기";
+  questionAiToolField.value = [...questionAiToolField.options].some((option) => option.value === toolName) ? toolName : "기타 / 잘 모르겠어요";
+  questionTitleField.value = `${currentFieldNoteTitle} · 현장 지혜 검증 요청`;
+  questionContentField.value = notes.slice(0, 450);
+  questionAnswerField.value = draft;
+  questionCheckField.value = "사내 작업표준·안전수칙과 맞는지, 빠진 위험요인이 없는지 확인해 주세요.";
+  setQuestionStatus("초안을 검증 양식에 옮겼어요. 내용을 검토하고 직접 등록해 주세요.");
+  questionForm.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  questionTitleField.focus({ preventScroll: true });
+});
 
 const setBoardStatus = (message = "", isError = false) => {
   boardStatus.textContent = message;
@@ -66,6 +162,22 @@ const setQuestionStatus = (message = "", isError = false) => {
   questionStatus.textContent = message;
   questionStatus.classList.toggle("is-error", isError);
 };
+
+document.querySelectorAll(".manual-verify-button").forEach((button) => {
+  button.addEventListener("click", () => {
+    questionTitleField.value = button.dataset.verifyTitle || "";
+    questionContentField.value = button.dataset.verifyPrompt || "";
+    questionAnswerField.value = button.dataset.verifyAnswer || "";
+    questionCheckField.value = button.dataset.verifyCheck || "";
+    const requestedTool = button.dataset.verifyTool || "ChatGPT";
+    questionAiToolField.value = [...questionAiToolField.options].some((option) => option.value === requestedTool)
+      ? requestedTool
+      : "기타 / 잘 모르겠어요";
+    setQuestionStatus("예시 질문과 답변을 옮겼어요. 내용을 확인하고 자유롭게 수정한 뒤 직접 등록해 주세요.");
+    questionForm.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    questionTitleField.focus({ preventScroll: true });
+  });
+});
 
 const setAuthNotice = (message = "", isError = false) => {
   authNotice.textContent = message;
@@ -226,14 +338,14 @@ const formatPostDate = (value) => {
   }).format(date);
 };
 
-const loadComments = async (postId, commentsList, countLabel, statusHandler = setCommentStatus) => {
+const loadComments = async (postId, commentsList, countLabel, statusHandler = setCommentStatus, countName = "댓글") => {
   try {
     const response = await fetch(`/api/posts/${postId}/comments`);
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "댓글을 불러오지 못했어요.");
 
     commentsList.replaceChildren();
-    countLabel.textContent = `댓글 ${result.comments.length}개`;
+    countLabel.textContent = `${countName} ${result.comments.length}개`;
     for (const comment of result.comments) {
       const item = document.createElement("li");
       item.className = "comment-item";
@@ -329,21 +441,44 @@ const createQuestionCard = (question) => {
   const title = document.createElement("h3");
   title.className = "question-title";
   title.textContent = question.title;
-  const content = document.createElement("p");
-  content.className = "post-content";
-  content.textContent = question.body ?? question.content.split("\n").slice(1).join("\n");
+  const questionBody = question.body ?? question.content.split("\n").slice(1).join("\n");
+  const content = document.createElement("div");
+  content.className = "question-details";
+  const verificationMatch = questionBody.match(/^사용한 AI: ([^\n]+)\n\n내 질문:\n([\s\S]*?)\n\nAI 답변:\n([\s\S]*?)\n\n함께 확인할 점:\n([\s\S]*)$/);
+  if (verificationMatch) {
+    const fields = [
+      ["사용한 AI", verificationMatch[1], "verification-tool"],
+      ["내 질문", verificationMatch[2], ""],
+      ["AI 답변", verificationMatch[3], "verification-answer"],
+      ["함께 확인할 점", verificationMatch[4], ""],
+    ];
+    for (const [labelText, value, modifier] of fields) {
+      const section = document.createElement("div");
+      section.className = `verification-field ${modifier}`.trim();
+      const label = document.createElement("strong");
+      label.textContent = labelText;
+      const text = document.createElement("p");
+      text.className = "post-content";
+      text.textContent = value;
+      section.append(label, text);
+      content.append(section);
+    }
+  } else {
+    content.className = "post-content question-details";
+    content.textContent = questionBody;
+  }
 
   const commentsPanel = document.createElement("section");
   commentsPanel.className = "comments-panel";
-  commentsPanel.setAttribute("aria-label", `${question.title} 답변`);
+  commentsPanel.setAttribute("aria-label", `${question.title} 검증 의견`);
   const commentsHeading = document.createElement("div");
   commentsHeading.className = "comments-heading";
   const label = document.createElement("span");
   label.className = "comments-label";
-  label.textContent = "답변 및 의견";
+  label.textContent = "함께 검증한 의견";
   const countLabel = document.createElement("span");
   countLabel.className = "comment-count";
-  countLabel.textContent = "댓글 0개";
+  countLabel.textContent = "검증 의견 0개";
   commentsHeading.append(label, countLabel);
   const comments = document.createElement("ol");
   comments.className = "comment-list";
@@ -368,7 +503,7 @@ const createQuestionCard = (question) => {
   }
   body.append(commentsPanel);
   item.append(avatar, body);
-  loadComments(question.id, comments, countLabel, setQuestionStatus);
+  loadComments(question.id, comments, countLabel, setQuestionStatus, "검증 의견");
   return item;
 };
 
@@ -624,14 +759,23 @@ refreshPosts.addEventListener("click", loadPosts);
 questionForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const title = questionTitleField.value.trim();
-  const content = questionContentField.value.trim();
+  const aiTool = questionAiToolField.value.trim();
+  const promptText = questionContentField.value.trim();
+  const answerText = questionAnswerField.value.trim();
+  const checkText = questionCheckField.value.trim();
+  const content = buildVerificationContent({ aiTool, promptText, answerText, checkText });
   if (!currentUser) {
     showLoginRequired();
     return;
   }
-  if (!title || !content) {
-    setQuestionStatus("질문 제목과 내용을 모두 입력해 주세요.", true);
-    (!title ? questionTitleField : questionContentField).focus();
+  if (!title || !aiTool || !promptText || !answerText || !checkText) {
+    setQuestionStatus("AI 도구, 내 질문, AI 답변, 함께 확인할 점을 모두 입력해 주세요.", true);
+    (!title ? questionTitleField : !aiTool ? questionAiToolField : !promptText ? questionContentField : !answerText ? questionAnswerField : questionCheckField).focus();
+    return;
+  }
+  if (content.length > 2000) {
+    setQuestionStatus("입력한 내용이 길어요. 전체 내용을 2,000자 이내로 줄여주세요.", true);
+    questionAnswerField.focus();
     return;
   }
 
@@ -648,7 +792,7 @@ questionForm.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error(result.error || "질문을 등록하지 못했어요.");
     questionForm.reset();
     await loadQuestions();
-    setQuestionStatus("질문을 등록했습니다. 함께 답을 찾아봐요.");
+    setQuestionStatus("AI 답변 검증 요청을 등록했어요. 함께 확인해볼게요.");
   } catch (error) {
     setQuestionStatus(error.message || "질문을 등록하지 못했어요. 다시 시도해 주세요.", true);
   } finally {

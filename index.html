@@ -1,27 +1,30 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#080d19">
-  <meta name="description" content="AI를 배우며 아이디어를 만들고 새로운 가능성을 탐구하는 송구현의 작은 온라인 공간입니다.">
-  <title>송구현의 AI 수업 기록 — 별이 빛나는 학습 공간</title>
-  <link rel="stylesheet" href="style.css?v=korean-audio-cleanup-20261104">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="37년의 현장 경험과 AI를 연결해 시니어의 지혜를 새로운 일과 실무 자산으로 만드는 SENIOR AI 2.0.">
+  <title>AI 인생동행 : SENIOR AI 2.0 — 37년의 경험, AI로 다시 출근합니다</title>
+  <link rel="stylesheet" href="style.css?v=senior-ai-v2-20261106b">
 </head>
 <body>
-  <div class="meteor-field" aria-hidden="true">
-    <span class="meteor"></span>
-    <span class="meteor"></span>
-    <span class="meteor"></span>
-    <span class="meteor"></span>
-    <span class="meteor"></span>
-  </div>
-  <main class="page-shell">
-    <header class="topbar" aria-label="페이지 메뉴">
-      <a class="wordmark" href="#home" aria-label="송구현 홈"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 14.3 9l6.8.3-5.3 4.3 1.8 6.5-5.6-3.8-5.6 3.8 1.8-6.5-5.3-4.3L9.7 9z"/></svg></span><span class="brand-name">SONG<span> / </span>AI LAB</span></a>
-      <nav class="quick-nav" aria-label="빠른 메뉴">
-        <a href="#community">커뮤니티</a>
-        <a class="top-link" href="#music">배경음악 <span aria-hidden="true">♫</span></a>
+  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+  <main class="site-shell" id="main-content">
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="AI 인생동행 SENIOR AI 2.0 홈">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M7 36 20 9l8 17 5-10 8 20"/><path d="M12 36h29"/><circle cx="20" cy="9" r="3"/><circle cx="33" cy="16" r="3"/></svg></span>
+        <span class="brand-copy"><strong>AI 인생동행 <em>: SENIOR AI 2.0</em></strong><small>37년의 경험, AI로 다시 출근합니다</small></span>
+      </a>
+      <nav class="main-nav" aria-label="주요 메뉴">
+        <a href="#philosophy">인턴의 철학</a>
+        <a href="#roadmap">기호의 6단계</a>
+        <a href="#ai-converter">현장수첩 AI 변환기</a>
+        <a href="#collaboration">세대 협업</a>
+        <a href="#opportunities">제2의 출근길</a>
+        <a href="#community">현장 지혜</a>
+      </nav>
+      <div class="account-area">
         <button class="auth-open" id="auth-open" type="button">로그인 / 회원가입</button>
         <div class="auth-menu" id="auth-menu" hidden>
           <span class="auth-user" id="auth-user"></span>
@@ -30,149 +33,177 @@
           <button class="auth-menu-button" id="view-my-posts" type="button" hidden>내가 쓴 글</button>
           <button class="auth-menu-button" id="auth-logout" data-auth-mode="logout" type="button" hidden>로그아웃</button>
         </div>
-      </nav>
+      </div>
     </header>
 
-    <div class="music-credit"><a href="https://pixabay.com/music/main-title-anime-piano-1-125502/" target="_blank" rel="noopener noreferrer">Anime Piano 1 · 3AMAudio (Pixabay)</a> · <a href="https://pixabay.com/service/license-summary/" target="_blank" rel="noopener noreferrer">사용 라이선스</a></div>
-    <div class="space-audio" id="music" aria-label="애니메이션풍 피아노 배경음악 플레이어">
-      <span class="audio-indicator" id="audio-indicator" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <button class="audio-toggle" id="audio-toggle" type="button" aria-pressed="false" aria-label="배경음악 재생 또는 정지">Anime Piano 1 재생</button>
-      <label class="visually-hidden" for="audio-volume">배경음악 음량</label>
-      <input class="audio-volume" id="audio-volume" type="range" min="0" max="0.5" step="0.01" value="0.42" aria-label="배경음악 음량">
-      <span class="audio-caption" id="audio-caption">Pixabay 라이선스 · 3AMAudio</span>
-    </div>
-
-    <section class="galaxy-banner" role="img" aria-label="푸른 별과 성운이 흐르는 은하수 풍경">
-      <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <linearGradient id="galaxy-sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#090f26"/><stop offset=".48" stop-color="#151b49"/><stop offset="1" stop-color="#091523"/></linearGradient>
-          <linearGradient id="galaxy-ribbon" x1="0" y1=".1" x2="1" y2=".85"><stop stop-color="#637cf4" stop-opacity="0"/><stop offset=".35" stop-color="#b2abff" stop-opacity=".5"/><stop offset=".57" stop-color="#81ddfa" stop-opacity=".84"/><stop offset=".76" stop-color="#a7a8ff" stop-opacity=".48"/><stop offset="1" stop-color="#425ed7" stop-opacity="0"/></linearGradient>
-          <radialGradient id="nebula-glow"><stop stop-color="#79d9ff" stop-opacity=".53"/><stop offset="1" stop-color="#826aff" stop-opacity="0"/></radialGradient>
-          <filter id="galaxy-blur"><feGaussianBlur stdDeviation="23"/></filter>
-        </defs>
-        <rect width="1200" height="300" fill="url(#galaxy-sky)"/>
-        <ellipse cx="305" cy="183" rx="240" ry="113" fill="url(#nebula-glow)" filter="url(#galaxy-blur)"/>
-        <ellipse cx="922" cy="90" rx="218" ry="108" fill="url(#nebula-glow)" filter="url(#galaxy-blur)"/>
-        <path d="M-80 253C121 83 284 267 479 141S812 34 1019 149s295 56 361-15" fill="none" stroke="url(#galaxy-ribbon)" stroke-width="83" opacity=".8" filter="url(#galaxy-blur)"/>
-        <path d="M-40 236C133 97 293 264 493 143S818 47 1019 153s277 50 324-6" fill="none" stroke="url(#galaxy-ribbon)" stroke-width="30" opacity=".56"/>
-        <g fill="#f3f8ff"><circle cx="82" cy="51" r="1.6"/><circle cx="161" cy="151" r="1"/><circle cx="252" cy="62" r="1.2"/><circle cx="340" cy="224" r="1.5"/><circle cx="433" cy="40" r="1"/><circle cx="520" cy="202" r="1.2"/><circle cx="612" cy="65" r="1.5"/><circle cx="703" cy="237" r="1"/><circle cx="792" cy="50" r="1.2"/><circle cx="884" cy="211" r="1.5"/><circle cx="986" cy="42" r="1"/><circle cx="1087" cy="210" r="1.3"/><circle cx="1160" cy="77" r="1.5"/></g>
-        <g fill="#8ce7ff"><circle cx="207" cy="105" r="1.6"/><circle cx="571" cy="120" r="1.4"/><circle cx="765" cy="128" r="1.8"/><circle cx="1047" cy="110" r="1.6"/></g>
-      </svg>
-      <div class="galaxy-caption"><span>DEEP SPACE</span><span>작은 발견들이 모여 하나의 은하가 됩니다</span></div>
+    <section class="hero v2-hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> AI 인생동행 · 세대 상생 프로젝트</p>
+        <p class="hero-kicker">기호의 현장 지혜 <span>×</span> 선우의 혁신 기술</p>
+        <h1 id="hero-title">37년의 현장 경험,<br><span>AI라는 날개를 달고<br>다시 출근합니다.</span></h1>
+        <p class="hero-description">기호의 37년 현장 지혜와 선우의 혁신 기술이 만나는 곳. 평생 몸으로 익힌 제조·품질·영업 노하우를 AI로 디지털 자산화해 청년 기업과 함께 새로운 가치를 만듭니다.</p>
+        <div class="hero-actions">
+          <a class="button-primary" href="#roadmap">기호의 6단계 코스 보기 <span aria-hidden="true">→</span></a>
+          <a class="button-secondary" href="#ai-converter">내 경험 AI로 정리해보기 <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-promises" aria-label="SENIOR AI 2.0의 원칙">
+          <span><b aria-hidden="true">01</b> 경험을 자산으로</span>
+          <span><b aria-hidden="true">02</b> 청년과 함께</span>
+          <span><b aria-hidden="true">03</b> 결과물로 연결</span>
+        </div>
+        <p class="concept-note">영화 「인턴」의 세대 상생에서 영감을 받은 비공식 기획 콘셉트입니다. 배우·제작사와 제휴한 서비스가 아닙니다.</p>
+      </div>
+      <aside class="hero-duo-card" aria-label="기호의 현장 수첩과 선우의 AI 노트북이 만나는 일러스트">
+        <div class="duo-card-top"><span>FIELD WISDOM × NEW TECHNOLOGY</span><span class="concept-badge">세대 협업</span></div>
+        <div class="mentor-meetup">
+          <article class="mentor-card mentor-kiho">
+            <span class="mentor-label">기호의 37년 수첩</span>
+            <svg viewBox="0 0 170 150" role="img" aria-label="현장 수첩 일러스트"><rect x="35" y="20" width="98" height="112" rx="14" fill="#f4e6c7"/><path d="M52 20v112" stroke="#d59b48" stroke-width="5"/><path d="M67 49h48M67 67h43M67 85h48M67 103h34" stroke="#67765c" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="51" r="3" fill="#c46d45"/><circle cx="50" cy="69" r="3" fill="#c46d45"/><circle cx="50" cy="87" r="3" fill="#c46d45"/></svg>
+            <strong>위기관리의 지혜</strong><small>몸으로 익힌 기준과 노하우</small>
+          </article>
+          <div class="mentor-bridge" aria-hidden="true"><span>+</span><b>잇다</b><span>→</span></div>
+          <article class="mentor-card mentor-sunwoo">
+            <span class="mentor-label">선우의 AI 노트북</span>
+            <svg viewBox="0 0 190 150" role="img" aria-label="AI 노트북 일러스트"><rect x="38" y="20" width="114" height="83" rx="11" fill="#d9e7ec" stroke="#f7f3e8" stroke-width="5"/><rect x="49" y="31" width="92" height="61" rx="5" fill="#263c4d"/><circle cx="95" cy="54" r="12" fill="#dce97a"/><path d="M95 37v7m0 20v7M78 54h7m20 0h7m-29-12 5 5m14 14 5 5m0-24-5 5M86 59l-5 5" stroke="#e8efb2" stroke-width="3" stroke-linecap="round"/><path d="M24 109h142l13 14H11z" fill="#dce97a" stroke="#f7f3e8" stroke-width="4"/><path d="M79 113h33" stroke="#657b78" stroke-width="3" stroke-linecap="round"/></svg>
+            <strong>최신 AI 기술</strong><small>빠르게 실험하고 연결하는 힘</small>
+          </article>
+        </div>
+        <div class="visual-handshake"><span>기호는 현장 지혜를, 선우는 AI를 나눕니다.</span><b aria-hidden="true">✦</b></div>
+      </aside>
     </section>
 
-    <section class="profile" id="home" aria-labelledby="profile-name">
-      <div class="hero-kicker"><span class="live-dot"></span> AI LEARNING · CURIOSITY IN ORBIT</div>
-      <div class="avatar-wrap" aria-label="별이 빛나는 우주 속 AI 신경망 아이콘">
-        <div class="avatar-orbit orbit-one"></div>
-        <div class="avatar-orbit orbit-two"></div>
-        <div class="avatar-art"><svg viewBox="0 0 64 64" role="img" aria-label="AI 신경망"><path d="M32 10v11M32 43v11M10 32h11M43 32h11M16.5 16.5l8 8M39.5 39.5l8 8M47.5 16.5l-8 8M24.5 39.5l-8 8"/><circle cx="32" cy="32" r="12"/><circle cx="32" cy="32" r="4"/><circle cx="32" cy="9" r="2"/><circle cx="32" cy="55" r="2"/><circle cx="9" cy="32" r="2"/><circle cx="55" cy="32" r="2"/></svg></div>
-        <span class="avatar-sparkle sparkle-one" aria-hidden="true">+</span>
-        <span class="avatar-sparkle sparkle-two" aria-hidden="true">.</span>
+    <section class="section philosophy-section" id="philosophy" aria-labelledby="philosophy-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE INTERN · WISDOM MEETS INNOVATION</p><h2 id="philosophy-title">기호의 지혜와 선우의 기술이 만나는 이유</h2><p class="section-lead">경험을 낡은 것으로 보지 않고, 새로운 기술과 연결해 현장의 다음 해법을 만듭니다.</p></div>
+        <span class="section-number" aria-hidden="true">00</span>
       </div>
-      <div class="location"><span class="location-dot"></span> 지금, AI 수업을 듣고 있어요</div>
-      <h1 id="profile-name">안녕하세요, <span>송구현</span>입니다<span class="title-period">.</span></h1>
-      <p class="bio">AI와 함께 배우고, 작은 아이디어를 직접 만들어 봅니다.<br>새롭게 발견한 것들을 별처럼 이곳에 차곡차곡 모으고 있어요.</p>
-    </div>
+      <div class="philosophy-grid" role="table" aria-label="기존 AI 교육과 SENIOR AI 2.0 비교">
+        <div class="philosophy-head" role="columnheader">기존의 기능 중심 교육</div><div class="philosophy-head philosophy-v2-head" role="columnheader">SENIOR AI 2.0</div>
+        <div class="philosophy-old" role="cell">단순 기능 암기</div><div class="philosophy-new" role="cell"><span>→</span> 내 현장 경험의 자산화</div>
+        <div class="philosophy-old" role="cell">새로운 툴을 따라가는 부담</div><div class="philosophy-new" role="cell"><span>→</span> 익숙한 현장 문제부터 해결</div>
+        <div class="philosophy-old" role="cell">혼자 배우는 과정</div><div class="philosophy-new" role="cell"><span>→</span> 청년과의 크로스 멘토링</div>
+        <div class="philosophy-old" role="cell">도구 사용에서 끝</div><div class="philosophy-new" role="cell"><span>→</span> 경험과 기술이 만난 실무 산출물</div>
+        <div class="philosophy-old" role="cell">수료증으로 마무리</div><div class="philosophy-new" role="cell"><span>→</span> 기술고문·AI 강사라는 새 출근길</div>
+      </div>
+    </section>
 
-    <section class="community-section" id="community" aria-label="커뮤니티">
-      <div class="section-heading"><span>함께 배우는 공간</span><span class="heading-line"></span><span class="link-count">COMMUNITY</span></div>
-      <nav class="community-tabs" aria-label="커뮤니티 게시판">
-        <a class="community-tab is-active" href="#board" aria-current="location"><span class="tab-icon">✳</span><span>가입인사</span><span class="tab-description">서로 인사 나누기</span><span class="link-arrow">›</span></a>
-        <a class="community-tab" href="#qa-board"><span class="tab-icon">?</span><span>AI Q&amp;A</span><span class="tab-description">질문하고 답변하기</span><span class="link-arrow">›</span></a>
-      </nav>
+    <section class="section roadmap-section" id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">A PRACTICAL AI JOURNEY</p><h2 id="roadmap-title">기호의 6단계 실무 AI 로드맵</h2><p class="section-lead">한 걸음씩 배우고, 단계마다 내 이름으로 된 결과물을 만듭니다.</p></div>
+        <span class="section-number" aria-hidden="true">01—06</span>
+      </div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><span class="roadmap-step">STEP 01</span><h3>기호처럼 배우기 (AI 입문)</h3><p>AI와 편하게 대화하고 기본 도구에 익숙해져요.</p><span class="deliverable">결과물 <b>나만의 AI 음성 업무비서</b></span></article>
+        <article class="roadmap-card"><span class="roadmap-step">STEP 02</span><h3>37년의 경험 지식화</h3><p>흩어진 기억과 노하우를 찾기 쉬운 지식으로 정리해요.</p><span class="deliverable">결과물 <b>AI 기반 업무 노하우 DB</b></span></article>
+        <article class="roadmap-card"><span class="roadmap-step">STEP 03</span><h3>세대 간 협업 (크로스 멘토링)</h3><p>서로의 언어와 강점을 연결해 함께 문제를 풀어요.</p><span class="deliverable">결과물 <b>청년-시니어 협동 AI 프로젝트</b></span></article>
+        <article class="roadmap-card"><span class="roadmap-step">STEP 04</span><h3>디지털 적응 &amp; 업무 혁신</h3><p>반복 업무와 공정의 작은 개선점을 찾아 실험해요.</p><span class="deliverable">결과물 <b>공정·업무 자동화 개선 사례집</b></span></article>
+        <article class="roadmap-card"><span class="roadmap-step">STEP 05</span><h3>경험 전수 (AI 시니어 멘토)</h3><p>내 노하우를 다른 사람이 배우기 쉬운 자료로 바꿔요.</p><span class="deliverable">결과물 <b>나만의 AI 사내 강의 패키지</b></span></article>
+        <article class="roadmap-card roadmap-card-final"><span class="roadmap-step">STEP 06</span><h3>새로운 출근 (제2의 인생)</h3><p>현장 경험과 AI 활용 역량을 다음 기회로 연결해요.</p><span class="deliverable">결과물 <b>기술고문 및 자문 제안서</b></span></article>
+      </div>
+    </section>
+
+    <section class="section converter-section" id="ai-converter" aria-labelledby="converter-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">FIELD NOTE → STANDARD OPERATING PROCEDURE</p><h2 id="converter-title">기호의 현장 수첩 AI 변환기</h2><p class="section-lead">현장 메모를 정리된 표준작업절차(SOP) 초안으로 바꿔봅니다.</p></div>
+        <span class="section-number" aria-hidden="true">TRY IT</span>
+      </div>
+      <div class="converter-card">
+        <div class="converter-presets" aria-label="현장 메모 예시">
+          <span class="preset-label">예시 메모 불러오기</span>
+          <button type="button" class="note-preset" data-preset="quality">제조·품질: 동절기 표면 크랙 방지법</button>
+          <button type="button" class="note-preset" data-preset="sales">영업: 납품 단가 협상법</button>
+          <button type="button" class="note-preset" data-preset="team">조직: 후배 작업자 대화법</button>
+        </div>
+        <label class="field-label" for="field-notes-input">현장에서 쓰던 말로 편하게 적어주세요</label>
+        <textarea id="field-notes-input" class="field-notes-input" maxlength="1500" rows="5" placeholder="예: 겨울에 소재가 차가우면 바로 세게 가공하지 말고, 온도와 표면 상태 먼저 확인. 이상하면 공정 멈추고 품질 담당자 호출…"></textarea>
+        <div class="converter-actions"><span class="converter-status" id="converter-status" role="status" aria-live="polite">입력한 메모를 브라우저에서 SOP 틀에 맞춰 정리합니다.</span><button id="convert-notes" class="button-primary" type="button">AI 매뉴얼로 변환하기 <span aria-hidden="true">→</span></button></div>
+        <div class="sop-result-wrap" id="sop-result-wrap" hidden><div class="sop-result-heading"><strong>표준작업절차(SOP) 초안</strong><span>검토 전 초안</span></div><pre id="sop-output" class="sop-output"></pre><button id="send-to-verification" class="button-secondary" type="button">이 초안을 현장 지혜 검증소로 보내기 <span aria-hidden="true">↓</span></button></div>
+        <p class="converter-disclaimer">이 체험은 입력 메모를 SOP 틀에 맞춰 정리하는 브라우저 시뮬레이터이며 실제 AI 추론·안전 검증을 수행하지 않습니다. 실제 작업 전에는 반드시 사내 표준과 안전 담당자의 검토를 받으세요.</p>
+      </div>
+    </section>
+
+    <section class="section collaboration-section" id="collaboration" aria-labelledby="collaboration-title">
+      <div class="section-heading"><div><p class="eyebrow">CROSS-GENERATION CO-CREATION</p><h2 id="collaboration-title">기호의 현장 지혜와 선우의 기술이 만날 때</h2><p class="section-lead">가르치는 사람과 배우는 사람을 나누지 않고, 서로의 전문성을 교환합니다.</p></div><span class="section-number" aria-hidden="true">02</span></div>
+      <div class="collaboration-grid">
+        <article class="collaboration-card"><span class="collab-mark collab-mark-gold">기호</span><h3>현장을 아는 사람</h3><p>문서에 다 담기지 않는 판단 기준, 고객과의 신뢰, 위기 대응의 맥락을 전합니다.</p><span class="collab-caption">경험 · 판단 · 맥락</span></article>
+        <div class="collab-plus" aria-hidden="true">+</div>
+        <article class="collaboration-card"><span class="collab-mark collab-mark-lime">선우</span><h3>기술을 연결하는 사람</h3><p>AI 도구와 디지털 업무 방식을 제안하고, 경험을 검색·공유할 수 있게 돕습니다.</p><span class="collab-caption">AI · 실험 · 연결</span></article>
+        <div class="collab-equals" aria-hidden="true">→</div>
+        <article class="collaboration-card collaboration-result"><span class="collab-mark collab-mark-white">함께</span><h3>실무에서 쓰이는 결과</h3><p>현장에 맞게 검증한 업무 가이드, 교육 자료, 개선 프로젝트를 공동으로 만듭니다.</p><span class="collab-caption">공동 프로젝트 · 새 가치</span></article>
+      </div>
+    </section>
+
+    <section class="section opportunities-section" id="opportunities" aria-labelledby="opportunities-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE NEXT COMMUTE</p><h2 id="opportunities-title">제2의 출근길</h2><p class="section-lead">평생 쌓은 경험을 다음 세대와 현장에 연결하는 네 가지 역할입니다.</p></div>
+        <span class="section-number" aria-hidden="true">03</span>
+      </div>
+      <div class="resource-grid opportunity-grid">
+        <article class="resource-card"><span class="resource-label">SMART FACTORY</span><h3>스마트공장 기술고문</h3><p>공정과 품질을 아는 경험으로 자동화 도입과 현장 안착을 돕습니다.</p><span class="resource-action">현장 경험 활용 <b aria-hidden="true">✦</b></span></article>
+        <article class="resource-card"><span class="resource-label">STARTUP MENTOR</span><h3>스타트업 비즈니스 멘토</h3><p>고객, 납품, 운영에서 배운 현실적인 판단 기준을 나눕니다.</p><span class="resource-action">경력 전수 <b aria-hidden="true">✦</b></span></article>
+        <article class="resource-card"><span class="resource-label">LOCAL AI COACH</span><h3>소상공인 AI 코치</h3><p>동네 가게의 홍보 문구, 고객 안내, 반복 업무를 AI와 함께 개선합니다.</p><span class="resource-action">생활밀착형 지원 <b aria-hidden="true">✦</b></span></article>
+        <article class="resource-card"><span class="resource-label">SENIOR AI EDUCATOR</span><h3>시니어 AI 강사</h3><p>직접 해본 경험으로 동료가 이해하기 쉬운 AI 수업을 만듭니다.</p><span class="resource-action">배움 나누기 <b aria-hidden="true">✦</b></span></article>
+      </div>
+      <p class="info-note"><span aria-hidden="true">i</span> 실제 채용·자격 정보를 보장하는 메뉴가 아니라 진로 아이디어입니다. 교육·일자리 공고와 자격 요건은 공식 기관에서 확인하세요.</p>
+    </section>
+
+    <section class="community-intro" id="community" aria-labelledby="community-title">
+      <div><p class="eyebrow">KNOW-HOW, SHARED FORWARD</p><h2 id="community-title">현장의 지혜를<br>함께 검증하고 이어갑니다.</h2><p>좋은 경험은 혼자만의 비법에 머물지 않아요.<br>나의 30년 이야기를 나누고, 서로의 질문에 근거와 경험을 보태요.</p></div>
+      <div class="community-shortcuts">
+        <a href="#board"><span class="shortcut-icon" aria-hidden="true">01</span><span><strong>나의 30년 이야기 &amp; 제2의 도전기</strong><small>경험과 새로운 시작을 나눠요</small></span><b aria-hidden="true">↓</b></a>
+        <a href="#qa-board"><span class="shortcut-icon shortcut-icon-green" aria-hidden="true">02</span><span><strong>현장 지혜 검증소</strong><small>AI 초안에 현장 경험을 더해 확인해요</small></span><b aria-hidden="true">↓</b></a>
+      </div>
     </section>
 
     <div class="auth-panel" id="auth-panel" aria-labelledby="auth-title" hidden>
-      <div class="auth-panel-heading">
-        <h2 id="auth-title">회원가입</h2>
-        <button class="auth-close" id="auth-close" type="button" aria-label="닫기">×</button>
-      </div>
-      <p class="auth-description">가입하면 인사와 질문을 남기고, 내가 쓴 글을 관리할 수 있어요.</p>
+      <div class="auth-panel-heading"><h2 id="auth-title">회원가입</h2><button class="auth-close" id="auth-close" type="button" aria-label="닫기">×</button></div>
+      <p class="auth-description">가입하면 현장 경험과 질문을 나누고, 내가 쓴 글을 관리할 수 있어요.</p>
       <form id="auth-form">
-        <label class="field-label" for="auth-email">이메일</label>
-        <input id="auth-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required>
-        <label class="field-label" for="auth-password">비밀번호</label>
-        <input id="auth-password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8자 이상 입력해 주세요" required>
-        <div class="auth-nickname-field" id="auth-nickname-field">
-          <label class="field-label" for="auth-nickname">닉네임</label>
-          <input id="auth-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="게시판에서 사용할 이름" required>
-        </div>
-        <p class="auth-notice" id="auth-notice" role="status" aria-live="polite"></p>
-        <button class="submit-post auth-submit" id="auth-submit" type="submit">회원가입</button>
+        <label class="field-label" for="auth-email">이메일</label><input id="auth-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="이메일 주소" required>
+        <label class="field-label" for="auth-password">비밀번호</label><input id="auth-password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="8자 이상 입력해 주세요" required>
+        <div class="auth-nickname-field" id="auth-nickname-field"><label class="field-label" for="auth-nickname">닉네임</label><input id="auth-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="게시판에서 사용할 이름" required></div>
+        <p class="auth-notice" id="auth-notice" role="status" aria-live="polite"></p><button class="button-primary auth-submit" id="auth-submit" type="submit">회원가입</button>
       </form>
-      <p class="auth-switch" id="auth-switch"></p>
-      <button class="auth-switch-button" id="auth-switch-button" type="button">이미 가입했다면 로그인</button>
-    </section>
+      <p class="auth-switch" id="auth-switch"></p><button class="auth-switch-button" id="auth-switch-button" type="button">이미 가입했다면 로그인</button>
+    </div>
 
-    <section class="links-section" aria-labelledby="links-heading">
-      <div class="section-heading"><span id="links-heading">AI STUDY LINKS</span><span class="heading-line"></span><span class="link-count">05</span></div>
-      <nav class="link-list" aria-label="송구현의 AI 링크">
-        <a class="link-card link-featured" href="#qa-board"><span class="link-icon icon-sun"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/></svg></span><span class="link-copy"><strong>AI에게 궁금한 것 물어보기</strong><small>수업 질문을 남기고 답을 함께 찾아요</small></span><span class="link-arrow">›</span></a>
-        <a class="link-card" href="https://www.google.com/search?q=%EC%83%9D%EC%84%B1%ED%98%95+AI" target="_blank" rel="noopener noreferrer"><span class="link-icon icon-camera"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M17.5 6.5 19 5"/></svg></span><span class="link-copy"><strong>생성형 AI 둘러보기</strong><small>요즘 새롭게 배우는 인공지능 이야기</small></span><span class="link-arrow">↗</span></a>
-        <a class="link-card" href="https://www.google.com/search?q=AI+%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8+%EA%B0%80%EC%9D%B4%EB%93%9C" target="_blank" rel="noopener noreferrer"><span class="link-icon icon-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 7.3 3.2l12.2 7a2.1 2.1 0 0 1 0 3.6l-12.2 7A1.5 1.5 0 0 1 5 19.5z"/></svg></span><span class="link-copy"><strong>오늘의 AI 학습 노트</strong><small>질문하고 실습하면서 배우는 기록</small></span><span class="link-arrow">↗</span></a>
-        <a class="link-card" href="#board"><span class="link-icon icon-mail"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14A2.5 2.5 0 0 1 21.5 7v10a2.5 2.5 0 0 1-2.5 2.5H5A2.5 2.5 0 0 1 2.5 17V7A2.5 2.5 0 0 1 5 4.5Z"/><path d="m3.5 6 8.5 7 8.5-7"/></svg></span><span class="link-copy"><strong>서로 반갑게 인사하기</strong><small>AI 수업 동료들의 가입인사 모음</small></span><span class="link-arrow">›</span></a>
-        <a class="link-card" href="#favorites"><span class="link-icon icon-heart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16M6 16V8m6 8V4m6 12v-5M4 8h4m2-4h4m2 7h4M6 16h12"/></svg></span><span class="link-copy"><strong>작은 아이디어 실험실</strong><small>AI로 만들고 싶은 것들을 모아요</small></span><span class="link-arrow">›</span></a>
-      </nav>
-    </section>
-
-
-
-    <section class="board-section" id="board" aria-labelledby="board-heading">
-      <div class="section-heading"><span id="board-heading">가입인사</span><span class="heading-line"></span><span class="link-count">함께 배우는 분들</span></div>
-      <p class="board-intro">AI 수업에서 만난 분들의 가입 인사를 모았어요. 저도 반가운 마음을 댓글로 남겼습니다.</p>
-
+    <section class="board-section greeting-section" id="board" aria-labelledby="board-heading">
+      <div class="board-title-row"><div><p class="eyebrow">FIELD STORIES · NEXT CHAPTER</p><h2 id="board-heading">나의 30년 이야기 &amp; 제2의 도전기</h2></div><span class="board-badge">기호의 현장 수첩</span></div>
+      <p class="board-intro">현장에서 배운 것, 다음에 해보고 싶은 일, AI를 써본 경험을 편하게 나눠주세요.</p>
       <form class="board-composer" id="post-form">
-        <label class="field-label" for="nickname">닉네임</label>
-        <input id="nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="어떻게 불러드릴까요?" required>
-        <label class="field-label" for="post-content">오늘의 한마디</label>
-        <textarea id="post-content" name="content" maxlength="1000" rows="4" placeholder="AI 수업에서 배우고 있는 내용이나 궁금한 점을 남겨주세요." required></textarea>
-      <div class="composer-footer"><span class="character-hint" id="post-auth-hint">로그인하면 가입인사를 남길 수 있어요.</span><button class="submit-post" id="submit-post" type="submit">글 남기기 <span aria-hidden="true">↗</span></button></div>
+        <label class="field-label" for="nickname">닉네임</label><input id="nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="어떻게 불러드릴까요?" required>
+        <label class="field-label" for="post-content">나의 현장 이야기</label><textarea id="post-content" name="content" maxlength="1000" rows="4" placeholder="오래 해온 일, 후배에게 전하고 싶은 팁, 다음 도전을 적어주세요." required></textarea>
+        <div class="composer-footer"><span class="character-hint" id="post-auth-hint">로그인하면 이야기를 남길 수 있어요.</span><button class="submit-post" id="submit-post" type="submit">이야기 남기기 <span aria-hidden="true">→</span></button></div>
       </form>
-
-      <div class="board-toolbar">
-        <span id="post-count">새로운 인사를 기다리는 중</span>
-        <button class="refresh-posts" id="refresh-posts" type="button" aria-label="게시글 새로고침">새로고침 ↻</button>
-      </div>
+      <div class="board-toolbar"><span id="post-count">이야기를 불러오는 중</span><button class="refresh-posts" id="refresh-posts" type="button" aria-label="게시글 새로고침">새로고침 ↻</button></div>
       <p class="board-status" id="board-status" role="status" aria-live="polite"></p>
-      <ol class="post-list" id="post-list" aria-label="방명록 게시글 목록"></ol>
-        <p class="board-status" id="comment-status" role="status" aria-live="polite"></p>
+      <ol class="post-list" id="post-list" aria-label="현장 이야기 게시글 목록"></ol>
+      <p class="board-status" id="comment-status" role="status" aria-live="polite"></p>
     </section>
 
     <section class="board-section qa-section" id="qa-board" aria-labelledby="qa-heading">
-      <div class="section-heading"><span id="qa-heading">궁금한 걸 물어보세요</span><span class="heading-line"></span><span class="link-count">AI Q&amp;A</span></div>
-      <p class="board-intro">AI 수업 중 궁금했던 점을 질문하고, 댓글로 답변과 경험을 나눠보세요.</p>
-
+      <div class="board-title-row"><div><p class="eyebrow">FIELD WISDOM CHECKPOINT</p><h2 id="qa-heading">현장 지혜 검증소</h2></div><span class="board-badge board-badge-green">AI 초안 × 현장 경험</span></div>
+      <p class="board-intro">현장수첩 변환기로 만든 SOP 초안을 올리고, 실제 작업 경험·안전 기준·공식 자료를 댓글로 함께 확인하세요.</p>
       <form class="board-composer" id="question-form">
-        <label class="field-label" for="question-nickname">닉네임</label>
-        <input id="question-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="닉네임을 입력해 주세요" required>
-        <label class="field-label" for="question-title">질문 제목</label>
-        <input id="question-title" name="title" type="text" maxlength="120" placeholder="무엇이 궁금한가요?" required>
-        <label class="field-label" for="question-content">질문 내용</label>
-        <textarea id="question-content" name="content" maxlength="2000" rows="4" placeholder="상황이나 시도해 본 방법도 함께 적어주시면 좋아요." required></textarea>
-        <div class="composer-footer"><span class="character-hint" id="question-auth-hint">로그인 후 질문을 남길 수 있어요.</span><button class="submit-post" id="submit-question" type="submit">질문 등록 <span aria-hidden="true">↗</span></button></div>
+        <label class="field-label" for="question-nickname">닉네임</label><input id="question-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="닉네임을 입력해 주세요" required>
+        <label class="field-label" for="question-ai-tool">초안 출처</label>
+        <select id="question-ai-tool" name="ai-tool" required>
+          <option value="">출처를 선택해 주세요</option><option>SENIOR AI 현장수첩 변환기</option><option>기호의 현장 수첩 AI 변환기</option><option>ChatGPT</option><option>Gemini</option><option>Microsoft Copilot</option><option>Claude</option><option>기타 / 잘 모르겠어요</option>
+        </select>
+        <label class="field-label" for="question-title">검증할 작업·주제</label><input id="question-title" name="title" type="text" maxlength="120" placeholder="예: 동절기 표면 크랙 방지 작업 순서" required>
+        <label class="field-label" for="question-content">현장 상황과 원래 메모</label><textarea id="question-content" name="content" maxlength="450" rows="3" placeholder="어떤 공정·상황인지, 현장에서 기억하는 기준을 적어주세요." required></textarea>
+        <label class="field-label" for="question-answer">AI가 정리한 SOP 초안</label><textarea id="question-answer" name="answer" maxlength="1000" rows="4" placeholder="현장수첩 변환기에서 만든 초안을 붙여 넣어주세요." required></textarea>
+        <label class="field-label" for="question-check">함께 확인할 점</label><textarea id="question-check" name="check" maxlength="350" rows="3" placeholder="빠진 위험요인, 실제 사내 기준과 다른 점, 확인할 자료를 적어주세요." required></textarea>
+        <p class="verification-safety">초안은 실제 작업 지시가 아닙니다. 회사 표준작업서·안전수칙과 반드시 대조하고, 안전·품질 담당자의 검토를 받은 뒤 사용하세요. 민감한 도면·고객정보·영업비밀은 올리지 마세요.</p>
+        <div class="composer-footer"><span class="character-hint" id="question-auth-hint">로그인 후 현장 지혜 검증을 요청할 수 있어요.</span><button class="submit-post" id="submit-question" type="submit">검증 요청 등록 <span aria-hidden="true">→</span></button></div>
       </form>
-
-      <div class="board-toolbar">
-        <span id="question-count">질문을 불러오는 중</span>
-        <button class="refresh-posts" id="refresh-questions" type="button" aria-label="질문 목록 새로고침">새로고침 ↻</button>
-      </div>
+      <div class="board-toolbar"><span id="question-count">검증 요청을 불러오는 중</span><button class="refresh-posts" id="refresh-questions" type="button" aria-label="검증 요청 목록 새로고침">새로고침 ↻</button></div>
       <p class="board-status" id="question-status" role="status" aria-live="polite"></p>
-      <ol class="post-list" id="question-list" aria-label="AI 질문 목록"></ol>
+      <ol class="post-list" id="question-list" aria-label="현장 지혜 검증 요청 목록"></ol>
     </section>
 
-    <section class="note-card" id="favorites" aria-label="좋아하는 것들">
-      <div class="note-top"><span class="note-label">AI LAB / NOW LEARNING</span><span class="note-flower" aria-hidden="true">01</span></div>
-      <p>AI와 함께라면<br>작은 아이디어도 새로운 궤도가 됩니다.</p>
-      <span class="note-caption">수업에서 배운 것을 하나씩 직접 만들어 보는 중</span>
-    </section>
-
-    <footer class="footer" id="contact">
-      <span class="footer-heart" aria-hidden="true">●</span><span>AI를 배우며 발견한 작은 가능성을 기록합니다.</span>
-      <span class="footer-credit">SONG GU HYEON <span aria-hidden="true">/</span> LEARNING AI, ONE IDEA AT A TIME</span>
-    </footer>
+    <footer class="site-footer"><a class="footer-brand" href="#home">AI 인생동행 : SENIOR AI 2.0</a><span>37년의 경험, AI로 다시 출근합니다.</span><span class="footer-credit">영화 「인턴」에서 영감을 받은 비공식 콘셉트 · 계정·게시판 기능 유지</span></footer>
   </main>
-  <script src="space-audio.js?v=korean-audio-cleanup-20261104"></script>
-  <script src="script.js?v=korean-audio-cleanup-20261104"></script>
+  <script src="script.js?v=senior-ai-v2-20261106c"></script>
 </body>
 </html>
