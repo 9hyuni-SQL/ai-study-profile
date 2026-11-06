@@ -215,6 +215,45 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .board-toolbar { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 14px; }
 .refresh-posts { padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; cursor: pointer; font-size: 13px; }
 .post-list { list-style: none; margin: 0; padding: 0; }
+.post-item { display: flex; align-items: flex-start; gap: 14px; padding: 18px 0; border-bottom: 1px solid #e2e8f0; }
+.post-avatar { display: grid; flex: 0 0 42px; width: 42px; height: 42px; place-items: center; border-radius: 8px; background: #1e293b; color: #f4c66d; }
+.post-avatar svg { width: 22px; height: 22px; fill: currentColor; }
+.question-avatar { background: #14532d; color: #86efac; }
+.question-avatar svg { width: 22px; height: 22px; fill: currentColor; }
+
+.post-body { flex: 1; min-width: 0; }
+.post-meta { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.post-nickname { color: #1e293b; font-size: 15px; font-weight: 800; }
+.post-date { color: #64748b; font-size: 13px; }
+.post-content { margin: 0; color: #334155; font-size: 15px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.question-title { margin: 4px 0 8px; color: #1e293b; font-size: 17px; font-weight: 850; line-height: 1.5; }
+.question-details { display: grid; gap: 10px; margin-top: 8px; }
+.verification-field { padding: 10px 14px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; }
+.verification-field strong { display: block; color: #475569; font-size: 12px; font-weight: 800; margin-bottom: 4px; }
+.verification-field p { margin: 0; color: #1e293b; font-size: 14px; line-height: 1.6; }
+.verification-tool { background: #f0fdf4; border-color: #bbf7d0; }
+.verification-tool strong { color: #166534; }
+.verification-answer { background: #fffbeb; border-color: #fde68a; }
+.verification-answer strong { color: #92400e; }
+
+.comments-panel { margin-top: 14px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
+.comments-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.comments-label { color: #475569; font-size: 13px; font-weight: 800; }
+.comment-count { color: #64748b; font-size: 12px; }
+.comment-list { display: grid; gap: 8px; margin: 8px 0; padding: 0; list-style: none; }
+.comment-item { padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
+.comment-meta { display: flex; align-items: baseline; gap: 8px; }
+.comment-meta strong { color: #1e293b; font-size: 13px; font-weight: 800; }
+.comment-meta time { color: #64748b; font-size: 11px; }
+.comment-content { margin-top: 4px; color: #334155; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.comment-login-prompt { margin-top: 8px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #1e293b; font-size: 13px; font-weight: 750; cursor: pointer; }
+.comment-login-prompt:hover { background: #f1f5f9; }
+.comment-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 8px; }
+.comment-form input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+.submit-comment { padding: 0 16px; border: 0; border-radius: 6px; background: #1e293b; color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
+.empty-posts { padding: 24px 16px; border: 1px dashed #cbd5e1; border-radius: 8px; color: #64748b; font-size: 14px; text-align: center; }
 .board-status { margin: 12px 0; color: #2563eb; font-size: 14px; }
 .board-status.is-error { color: #dc2626; }
 
