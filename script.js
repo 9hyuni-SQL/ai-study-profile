@@ -186,6 +186,9 @@ const setAuthNotice = (message = "", isError = false) => {
 
 const renderAuthState = () => {
   const loggedIn = Boolean(currentUser);
+  document.body.classList.toggle("is-logged-in", loggedIn);
+  const header = document.querySelector(".site-header");
+  if (header) header.classList.toggle("is-logged-in", loggedIn);
   authOpen.textContent = loggedIn ? `${currentUser.nickname} 님` : "로그인 / 회원가입";
   authOpen.classList.toggle("is-signed-in", loggedIn);
   authUser.textContent = loggedIn ? `${currentUser.nickname} · ${currentUser.email}` : "";
@@ -869,3 +872,23 @@ authForm.addEventListener("submit", async (event) => {
 loadCurrentUser();
 loadPosts();
 loadQuestions();
+
+// Mobile Navigation Toggle
+const navToggle = document.getElementById("nav-toggle");
+const mainNav = document.getElementById("main-nav");
+if (navToggle && mainNav) {
+  navToggle.addEventListener("click", () => {
+    const isOpen = mainNav.classList.toggle("is-open");
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+    navToggle.classList.toggle("is-active", isOpen);
+  });
+  mainNav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth <= 860) {
+        mainNav.classList.remove("is-open");
+        navToggle.setAttribute("aria-expanded", "false");
+        navToggle.classList.remove("is-active");
+      }
+    });
+  });
+}

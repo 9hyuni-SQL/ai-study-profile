@@ -29,6 +29,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-shell { width: min(1240px, calc(100% - 48px)); margin: 0 auto; padding: 20px 0 60px; }
 
 /* Header & Nav */
+
+/* Header Actions & Nav Toggle */
+.header-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.nav-toggle { display: none; width: 38px; height: 38px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #1e293b; font-size: 18px; cursor: pointer; place-items: center; }
+.nav-toggle.is-active { background: #1e293b; color: #fff; border-color: #1e293b; }
+
+/* PC & Common: Logged-in Compact Header */
+.site-header.is-logged-in { min-height: 60px; padding: 8px 18px; }
+.site-header.is-logged-in .brand-mark { width: 38px; height: 38px; }
+.site-header.is-logged-in .brand-mark svg { width: 22px; height: 22px; }
+.site-header.is-logged-in .brand-copy small { display: none; }
+.site-header.is-logged-in .brand-copy strong { font-size: 16px; }
+.site-header.is-logged-in .auth-open { min-height: 36px; padding: 5px 12px; font-size: 13px; border-color: #f59e0b; background: #fffbeb; color: #92400e; font-weight: 850; border-radius: 20px; }
+
 .site-header { position: sticky; z-index: 20; top: 8px; display: flex; min-height: 78px; align-items: center; justify-content: space-between; gap: 18px; padding: 11px 20px; border: 1px solid #cbd3df; border-radius: 12px; background: #f8fafcf4; box-shadow: 0 8px 25px #0f172a12; backdrop-filter: blur(16px); }
 .brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 12px; text-decoration: none; }
 .brand-mark { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 10px; background: var(--indigo); color: #f4c66d; }
@@ -286,8 +300,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 860px) {
-  .site-header { flex-wrap: wrap; }
-  .main-nav { order: 3; flex-basis: 100%; justify-content: space-between; overflow-x: auto; padding: 8px 2px 2px; }
+  .site-header { position: sticky; top: 6px; padding: 8px 12px; min-height: 52px; border-radius: 10px; gap: 10px; flex-wrap: wrap; }
+  .brand-mark { width: 36px; height: 36px; border-radius: 8px; }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-copy strong { font-size: 15px; }
+  .brand-copy strong em { font-size: 12px; }
+  .brand-copy small { display: none; }
+  .nav-toggle { display: grid; }
+  
+  .main-nav { display: none; order: 4; flex-basis: 100%; flex-direction: column; align-items: stretch; gap: 4px; padding: 10px 0 4px; border-top: 1px solid #e2e8f0; margin-top: 6px; }
+  .main-nav.is-open { display: flex; }
+  .main-nav a { padding: 9px 12px; border-radius: 6px; background: #f8fafc; font-size: 14px; text-align: left; }
+  .main-nav a:hover { background: #fff8eb; color: #b45309; }
+  .main-nav a::after { display: none; }
+  
+  .auth-open { min-height: 38px; padding: 6px 11px; font-size: 12px; border-radius: 6px; }
+  
+  /* 로그인 후 모바일 헤더 대폭 최소화 (Ultra-Compact) */
+  .site-header.is-logged-in { min-height: 44px; padding: 5px 10px; top: 4px; background: #fffffffa; }
+  .site-header.is-logged-in .brand-copy strong { font-size: 13px; }
+  .site-header.is-logged-in .brand-mark { width: 30px; height: 30px; }
+  .site-header.is-logged-in .brand-mark svg { width: 18px; height: 18px; }
+  .site-header.is-logged-in .auth-open { min-height: 32px; padding: 4px 9px; font-size: 11px; }
+  .site-header.is-logged-in .nav-toggle { width: 32px; height: 32px; font-size: 15px; }
+
   .collaboration-grid { grid-template-columns: 1fr 1fr; }
   .collab-plus, .collab-equals { min-height: 28px; }
 }
