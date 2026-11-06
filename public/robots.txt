@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://ai-study-profile.9hyuni.workers.dev/sitemap.xml
