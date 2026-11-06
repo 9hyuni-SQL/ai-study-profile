@@ -1,0 +1,25 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "ai-study-profile",
+	"main": "src/worker.js",
+	"compatibility_date": "2026-11-04",
+  "vars": {
+    "PUBLIC_SITE_URL": "https://ai-study-profile.9hyuni.workers.dev"
+  },
+	"workers_dev": true,
+	"assets": {
+    "directory": "./public",
+		"binding": "ASSETS",
+		"run_worker_first": [
+			"/api/*"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "ai-study-profile-db",
+			"database_id": "054f75a1-2ae7-4d2e-a52e-5fd07324a06f",
+			"migrations_dir": "migrations"
+		}
+	]
+}

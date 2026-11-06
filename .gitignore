@@ -1,0 +1,63 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Server logs and temp files
+*.log
+app-*.log
+server-*.log
+*.mjs
+verify-*.mjs
+
+# Private local SQLite database and transient journal files
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+../*.sqlite
+../*.sqlite3
+../*.sqlite3-*
+../*.db
+../../Cline/*.sqlite
+../../Cline/*.sqlite3
+../../Cline/*.sqlite3-*
+../../Cline/*.db
+../Cline/*.sqlite
+../Cline/*.sqlite3
+../Cline/*.sqlite3-*
+../Cline/*.db
+
+# Environment / config
+.env
+.venv
+venv/
+
+# Migration / temp scripts
+migrate_*.py
+test_*.py
+check-*.mjs
+
+# Executable for profile launcher is not needed in repo
+Open-AI-Profile.ps1
+
+# Authentication diagnostics / local CLI output
+gh-auth-*.mjs
+gh-*.mjs
+inspect-*.mjs
+check-*.mjs
+migrate_comments.py
+wrangler.toml
+worker-configuration.d.ts
+.wrangler/
+d1_migration_temp.json
+migration_data.sql
+node-*.log
+# Local auth/debug output (never commit)
+auth-debug-tail.jsonlndiag-auth-tail.jsonlnsignup-tail-latest.jsonl
+*.jsonl
