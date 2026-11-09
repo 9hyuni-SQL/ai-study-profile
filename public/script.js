@@ -207,16 +207,25 @@ sendToVerificationButton.addEventListener("click", () => {
 });
 
 const setBoardStatus = (message = "", isError = false) => {
+  boardStatus.setAttribute("role", "status");
+  boardStatus.setAttribute("aria-live", "polite");
+  boardStatus.setAttribute("aria-atomic", "true");
   boardStatus.textContent = message;
   boardStatus.classList.toggle("is-error", isError);
 };
 
 const setCommentStatus = (message = "", isError = false) => {
+  commentStatus.setAttribute("role", "status");
+  commentStatus.setAttribute("aria-live", "polite");
+  commentStatus.setAttribute("aria-atomic", "true");
   commentStatus.textContent = message;
   commentStatus.classList.toggle("is-error", isError);
 };
 
 const setQuestionStatus = (message = "", isError = false) => {
+  questionStatus.setAttribute("role", "status");
+  questionStatus.setAttribute("aria-live", "polite");
+  questionStatus.setAttribute("aria-atomic", "true");
   questionStatus.textContent = message;
   questionStatus.classList.toggle("is-error", isError);
 };
@@ -238,6 +247,9 @@ document.querySelectorAll(".manual-verify-button").forEach((button) => {
 });
 
 const setAuthNotice = (message = "", isError = false) => {
+  authNotice.setAttribute("role", "status");
+  authNotice.setAttribute("aria-live", "polite");
+  authNotice.setAttribute("aria-atomic", "true");
   authNotice.textContent = message;
   authNotice.classList.toggle("is-error", isError);
 };
