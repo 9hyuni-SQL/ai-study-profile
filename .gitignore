@@ -35,6 +35,7 @@ verify-*.mjs
 
 # Environment / config
 .env
+.dev.vars
 .venv
 venv/
 
@@ -59,5 +60,7 @@ d1_migration_temp.json
 migration_data.sql
 node-*.log
 # Local auth/debug output (never commit)
-auth-debug-tail.jsonlndiag-auth-tail.jsonlnsignup-tail-latest.jsonl
+auth-debug-tail.jsonl
+ndiag-auth-tail.jsonl
+nsignup-tail-latest.jsonl
 *.jsonl

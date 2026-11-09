@@ -1,78 +1,71 @@
-# SENIOR AI 2.0 : AI 인생동행 🎓
-> **37년의 현장 경험, AI라는 날개를 달고 다시 출근합니다.**  
-> 최민식(기호)의 37년 현장 지혜 × 한소희(선우)의 혁신 기술이 만나는 시니어 실무 지식 자산화 플랫폼
+# SENIOR AI 2.0 · AI 인생동행
+
+**배포된 서비스는 [ai-study-profile.9hyuni.workers.dev](https://ai-study-profile.9hyuni.workers.dev)에서 확인할 수 있고, 로컬 개발·테스트는 Cloudflare Wrangler로 실행합니다.** 이 프로젝트는 시니어의 현장 경험을 기록하고 세대 간 학습과 협업을 돕는 한국어 웹 플랫폼입니다.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Cloudflare%20Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://ai-study-profile.9hyuni.workers.dev)
-[![Release](https://img.shields.io/badge/Release-v2.1.0-blue?style=for-the-badge)](https://github.com/9hyuni-SQL/ai-study-profile/releases/tag/v2.1.0)
 [![GitHub License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
----
+## 개발 방법
 
-## 🌐 라이브 서비스 안내
-* **운영 사이트 URL:** [https://ai-study-profile.9hyuni.workers.dev](https://ai-study-profile.9hyuni.workers.dev)
-* **로컬 개발 서버:** `http://localhost:8098/`
+**배포 환경과 같은 Cloudflare Worker·D1 구성을 로컬에서 시험하려면 Wrangler를 사용합니다.** 프로젝트 루트에서 Node.js 20 이상과 npm을 준비한 뒤 다음 순서로 실행하세요.
 
----
+```powershell
+npm install --global wrangler
+npx wrangler d1 migrations apply ai-study-profile-db --local --config .\wrangler.jsonc
+```
 
-## 🎬 프로젝트 기획 배경 & 핵심 철학
+PowerShell에서 개발용 세션 비밀값 파일을 만들고 로컬 서버를 시작합니다. `.dev.vars`는 로컬 전용이며 커밋하지 마세요.
 
-영화 **「인턴」** 속 37년 경력의 시니어 인턴 **'기호'(최민식)**와 빠르게 성장하는 스타트업 청년 CEO **'선우'(한소희)**의 이야기에서 출발했습니다.  
-단순한 은퇴 후 소일거리가 아닌, 오랜 세월 제조·생산·품질·영업 현장에서 몸으로 익힌 **'암묵지(현장 노하우)'**를 생성형 AI를 통해 **'디지털 지식 자산'**으로 표준화하고, 2030 청년 기업과 함께 새로운 가치를 창출하는 **양방향 리버스 멘토링(Reverse Mentoring)** 플랫폼입니다.
+```powershell
+$secret = node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+Set-Content -Path .dev.vars -Value "SESSION_SECRET=$secret" -Encoding ascii
+npx wrangler dev
+```
 
-### 5대 패러다임 전환
-| 기존 기능 중심 AI 교육 | SENIOR AI 2.0 (영화 「인턴」 모델) |
-| :--- | :--- |
-| AI 기술 단순 암기 | **내 현장 경험의 자산화 및 지식화** |
-| 새로운 툴을 쫓아가는 부담 | **익숙한 기존 업무·현장 문제부터 개선** |
-| 혼자 모니터 보고 배우는 고립 학습 | **2030 청년과의 세대 간 공동 학습** |
-| 단순 도구 기능 습득이 목표 | **37년 경험과 AI가 결합된 실무 산출물 완성** |
-| 수료증 한 장 받고 종료 | **기술고문·AI 강사·멘토 등 새로운 출근길 연결** |
+로컬 사이트는 기본적으로 `http://localhost:8787/`에서 열립니다. Wrangler가 실행 중인 터미널에서 `Ctrl+C`를 누르면 서버가 종료됩니다.
 
----
+## 배포 방법
 
-## ✨ 핵심 기능 소개
+**Cloudflare 배포는 먼저 원격 D1 마이그레이션을 적용하고, 세션 비밀값을 Secret으로 등록한 뒤 Wrangler로 배포합니다.** `wrangler.jsonc`의 `ai-study-profile-db` D1 바인딩과 Cloudflare 계정 접근 권한을 확인하고, 프로젝트 루트에서 실행하세요.
 
-### 1. 영화 「인턴」과 시니어 AI의 6대 연결고리
-1. **37년간 쌓아온 직장 경험** ➔ 경험을 AI로 정리하고 지식화
-2. **젊은 CEO와 시니어 인턴의 만남** ➔ AI를 매개로 한 세대 간 상생 협업
-3. **디지털 환경에 적응하는 기호** ➔ 새로운 AI 기술과 도구 배우기
-4. **조직 내 문제 해결과 든든한 조언** ➔ AI를 활용한 실무 업무 문제 해결
-5. **젊은 직원들과의 진심 어린 소통** ➔ AI를 활용한 세대 간 소통 능력 향상
-6. **새로운 직장생활의 시작** ➔ AI를 활용한 제2의 직업 찾기
+```powershell
+npx wrangler d1 migrations apply ai-study-profile-db --remote --config .\wrangler.jsonc
+npx wrangler secret put SESSION_SECRET
+npx wrangler deploy
+```
 
-### 2. 기호의 6단계 실무 AI 로드맵
-* **STEP 01: 기호처럼 배우기 (AI 입문)** ➔ `[결과물: 나만의 AI 음성 업무비서]`
-* **STEP 02: 37년의 경험 지식화** ➔ `[결과물: AI 기반 업무 노하우 DB]`
-* **STEP 03: 세대 간 협업 (크로스 멘토링)** ➔ `[결과물: 청년-시니어 협동 AI 프로젝트]`
-* **STEP 04: 디지털 적응 & 업무 혁신** ➔ `[결과물: 공정·업무 자동화 개선 사례집]`
-* **STEP 05: 경험 전수 (AI 시니어 멘토)** ➔ `[결과물: 나만의 AI 사내 강의 패키지]`
-* **STEP 06: 새로운 출근 (제2의 인생)** ➔ `[결과물: 기술고문 및 자문 제안서]`
+`SESSION_SECRET`을 입력하라는 프롬프트에는 예측하기 어려운 긴 임의 문자열을 사용합니다. 실제 비밀값은 채팅·소스·README·Git에 기록하지 마세요. 배포 후 `https://ai-study-profile.9hyuni.workers.dev`를 열어 화면과 로그인 흐름을 직접 확인하세요.
 
-### 3. 기호의 현장 수첩 AI 변환기 (SOP 시뮬레이터)
-* 현장 구어체로 거칠게 작성된 노하우 메모(동절기 표면 크랙 방지법, 납품 단가 협상법, 후배 작업자 대화법 등)를 기업 **표준작업절차서(SOP)** 규격으로 즉시 구조화·변환합니다.
-* 변환된 초안은 원클릭으로 '현장 지혜 검증소' 게시판으로 보내 실무 감수를 요청할 수 있습니다.
+## 배포 파일과 로컬 작업 파일
 
-### 4. 제2의 출근길 (4대 전문 트랙)
-* **스마트공장 기술고문:** 공정·품질 노하우로 자동화 안착 지원
-* **스타트업 비즈니스 멘토:** 청년 창업가 대상 위기관리 및 경영 지혜 전수
-* **소상공인 AI 코치:** 골목상권 온라인 마케팅 및 고객 응대 AI 전환 코칭
-* **시니어 AI 전문강사:** 동년배 시니어 눈높이 맞춤형 디지털 교육
+**Cloudflare Workers는 `wrangler.jsonc`의 `assets.directory` 설정에 따라 `public/`만 정적 자산으로 배포합니다.** 배포할 프런트엔드는 `public/index.html`, `public/style.css`, `public/script.js`와 그 안에서 참조하는 `public/images/` 및 관련 자산입니다. Worker API는 `src/worker.js`, D1 스키마는 `migrations/`에 있습니다.
 
-### 5. 현장 지혜 커뮤니티 & 검증소
-* **나의 30년 이야기 & 제2의 도전기:** 시니어들의 커리어 스토리 공유
-* **현장 지혜 검증소:** AI가 제시한 답변이나 SOP 초안을 실제 현장 기준과 대조 검증하는 집단지성 공간
+원본 저장소 루트와 `public/`에 동일한 이름의 화면 파일이 남아 있을 수 있지만, **배포 정본은 `public/`**입니다. 변경을 적용할 때는 배포 대상 파일을 먼저 수정하고, 루트 사본을 정리할 때는 별도 비교·이력 검토를 거쳐 삭제하세요.
 
----
+루트의 `index.html`, `style.css`, `script.js`는 로컬 작업 사본이며, 배포 정본인 `public/`과 다를 수 있습니다. 현재 루트 사본에는 아직 배포되지 않은 SNS 작성 UI 변경도 있으므로 두 벌을 병합하기 전에는 삭제하지 마세요. 정적 에셋의 중복 루트 사본은 사용하지 말고, 배포 및 개발에서는 `public/`만 사용하세요.
 
-## 🛠 기술 스택
+`server.py`와 `serve.ps1`은 과거 로컬 실행 경로입니다. 현재 Worker의 `/api/auth/*`, `/api/me/posts`, 수정·삭제 API와 동작이 다를 수 있으므로 이 앱의 기능 검증이나 배포 준비에는 사용하지 마세요.
 
-* **Frontend:** Semantic HTML5, Modern Responsive CSS3, Vanilla JavaScript (ES6+), YouTube Embed API
-* **Edge / Backend:** Cloudflare Workers, Cloudflare D1 (Serverless SQLite), Cloudflare Static Assets CDN
-* **Security & Auth:** PBKDF2 with SHA-256 password hashing, Secure HttpOnly Session Cookies
-* **Local Server:** Node.js (v20+), Python SQLite Engine
+## 핵심 기능
 
----
+**이 서비스는 AI 사용법 설명에 그치지 않고, 경험을 정리해 공유하고 검토하는 실무 학습 흐름을 제공합니다.** 주요 화면은 다음과 같습니다.
 
-## 👥 협업 안내
-본 저장소는 세대 상생 AI 교육 모델을 발전시키기 위한 프로젝트입니다.  
-공동 작업 관련 문의 및 협업 제안은 [Issues](https://github.com/9hyuni-SQL/ai-study-profile/issues)를 통해 남겨주세요.
+- 영화 「인턴」에서 영감을 얻은 시니어·청년 세대 협업 소개
+- 현장 경험을 SOP 초안 형식으로 정리하는 브라우저 기반 변환 시뮬레이터
+- 경험과 다음 도전을 나누는 커뮤니티 및 현장 지혜 검증소
+- 로그인, 사용자 게시글 관리, 댓글 기능 (Cloudflare Worker와 D1 사용)
+
+변환기는 현재 브라우저에서 입력을 구조화하는 시뮬레이터이며 실제 생성형 AI API를 호출하지 않습니다. SOP 결과는 검토용 초안으로, 실제 작업 전 사내 안전·품질 기준을 확인해야 합니다.
+
+## 기술 스택
+
+**프런트엔드는 별도 프레임워크 없이 작성했고, 서버와 데이터 저장은 Cloudflare Workers와 D1을 사용합니다.**
+
+- HTML5, CSS3, Vanilla JavaScript
+- Cloudflare Workers, Workers Static Assets, Cloudflare D1
+- Wrangler CLI, D1 SQL migrations
+- Node.js 20 이상 (Wrangler 실행용)
+
+## 기여 및 라이선스
+
+**버그 제보와 개선 제안은 [GitHub Issues](https://github.com/9hyuni-SQL/ai-study-profile/issues)에 남겨 주세요.** 이 저장소는 MIT License로 배포되며 자세한 조건은 [`LICENSE`](LICENSE)를 확인하세요.
