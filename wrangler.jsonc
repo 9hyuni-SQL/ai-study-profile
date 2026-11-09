@@ -10,11 +10,7 @@
 	"assets": {
 		"directory": "./public",
 		"binding": "ASSETS",
-		"run_worker_first": [
-			"/api/*",
-			"/naver8995b7c286d6fa826de0cd97ecadf824*",
-			"/googlecced101ffb95aab3*"
-		]
+		"run_worker_first": true
 	},
 	"d1_databases": [
 		{
