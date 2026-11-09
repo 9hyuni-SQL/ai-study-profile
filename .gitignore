@@ -35,6 +35,7 @@ verify-*.mjs
 
 # Environment / config
 .env
+.dev.vars
 .venv
 venv/
 
