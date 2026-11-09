@@ -352,7 +352,7 @@
       <div class="board-title-row"><div><p class="eyebrow">FIELD STORIES · NEXT CHAPTER</p><h2 id="board-heading">나의 30년 이야기 &amp; 제2의 도전기</h2></div><span class="board-badge">기호의 현장 수첩</span></div>
       <p class="board-intro">현장에서 배운 것, 앞으로 도전해보고 싶은 일, AI를 접하며 느낀 소회를 편하게 나눠주세요.</p>
       <form class="board-composer" id="post-form">
-        <label class="field-label" for="nickname">닉네임</label><input id="nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="어떻게 불러드릴까요?" required>
+        <div class="composer-author-header" id="post-author-header" hidden><span class="comment-author-label" id="post-author-label"></span></div>
         <label class="field-label" for="post-content">나의 현장 이야기</label><textarea id="post-content" name="content" maxlength="1000" rows="4" placeholder="오래 해온 일, 후배에게 전하고 싶은 팁, 다음 도전을 적어주세요." required></textarea>
         <div class="composer-footer"><span class="character-hint" id="post-auth-hint">로그인하면 이야기를 남길 수 있어요.</span><button class="submit-post" id="submit-post" type="submit">이야기 남기기 <span aria-hidden="true">→</span></button></div>
       </form>
@@ -366,7 +366,7 @@
       <div class="board-title-row"><div><p class="eyebrow">FIELD WISDOM CHECKPOINT</p><h2 id="qa-heading">현장 지혜 검증소</h2></div><span class="board-badge board-badge-green">AI 초안 × 현장 경험</span></div>
       <p class="board-intro">현장수첩 변환기로 만든 SOP 초안이나 AI 답변을 올리고, 실제 작업 경험·안전 기준을 댓글로 함께 검증해 주세요.</p>
       <form class="board-composer" id="question-form">
-        <label class="field-label" for="question-nickname">닉네임</label><input id="question-nickname" name="nickname" type="text" maxlength="30" autocomplete="nickname" placeholder="닉네임을 입력해 주세요" required>
+        <div class="composer-author-header" id="question-author-header" hidden><span class="comment-author-label" id="question-author-label"></span></div>
         <label class="field-label" for="question-ai-tool">초안 출처</label>
         <select id="question-ai-tool" name="ai-tool" required>
           <option value="">출처를 선택해 주세요</option><option>기호의 현장 수첩 AI 변환기</option><option>ChatGPT</option><option>Gemini</option><option>Microsoft Copilot</option><option>Claude</option><option>기타 / 잘 모르겠어요</option>

@@ -218,6 +218,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .board-composer { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
 .field-label { grid-column: 1 / -1; color: #1e293b; font-size: 14px; font-weight: 750; }
+.composer-author-header { grid-column: 1 / -1; }
+.composer-author-header[hidden] { display: none; }
 .board-composer input, .board-composer textarea, .board-composer select { width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-size: 15px; }
 .board-composer textarea { grid-column: 1 / -1; }
 .verification-safety { grid-column: 1 / -1; margin: 4px 0 0; color: #64748b; font-size: 13px; }
@@ -265,6 +267,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .comment-login-prompt { margin-top: 8px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #1e293b; font-size: 13px; font-weight: 750; cursor: pointer; }
 .comment-login-prompt:hover { background: #f1f5f9; }
 .comment-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 8px; }
+.comment-form-header { grid-column: 1 / -1; }
+.comment-author-label { display: inline-block; padding: 3px 10px; border-radius: 999px; background: #e2e8f0; color: #1e293b; font-size: 12px; font-weight: 750; }
 .comment-form input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
 .submit-comment { padding: 0 16px; border: 0; border-radius: 6px; background: #1e293b; color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
 .empty-posts { padding: 24px 16px; border: 1px dashed #cbd5e1; border-radius: 8px; color: #64748b; font-size: 14px; text-align: center; }

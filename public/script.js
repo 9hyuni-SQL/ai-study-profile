@@ -13,7 +13,8 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
 const postForm = document.getElementById("post-form");
 const questionForm = document.getElementById("question-form");
-const nicknameField = document.getElementById("nickname");
+const postAuthorHeader = document.getElementById("post-author-header");
+const postAuthorLabel = document.getElementById("post-author-label");
 const contentField = document.getElementById("post-content");
 const postList = document.getElementById("post-list");
 const postCount = document.getElementById("post-count");
@@ -21,7 +22,8 @@ const boardStatus = document.getElementById("board-status");
 const submitPost = document.getElementById("submit-post");
 const refreshPosts = document.getElementById("refresh-posts");
 const commentStatus = document.getElementById("comment-status");
-const questionNicknameField = document.getElementById("question-nickname");
+const questionAuthorHeader = document.getElementById("question-author-header");
+const questionAuthorLabel = document.getElementById("question-author-label");
 const questionAiToolField = document.getElementById("question-ai-tool");
 const questionTitleField = document.getElementById("question-title");
 const questionContentField = document.getElementById("question-content");
@@ -61,6 +63,7 @@ let currentUser = null;
 let authMode = "register";
 let showingMyPosts = false;
 let currentFieldNoteTitle = "현장 노하우 정리";
+const CONVERTER_TOOL_NAME = "기호의 현장 수첩 AI 변환기";
 
 const buildVerificationContent = ({ aiTool, promptText, answerText, checkText }) =>
   `사용한 AI: ${aiTool}\n\n내 질문:\n${promptText}\n\nAI 답변:\n${answerText}\n\n함께 확인할 점:\n${checkText}`;
@@ -137,7 +140,7 @@ sendToVerificationButton.addEventListener("click", () => {
     converterStatus.textContent = "먼저 현장 메모를 입력하고 SOP 초안을 만들어 주세요.";
     return;
   }
-  const toolName = "SENIOR AI 현장수첩 변환기";
+  const toolName = CONVERTER_TOOL_NAME;
   questionAiToolField.value = [...questionAiToolField.options].some((option) => option.value === toolName) ? toolName : "기타 / 잘 모르겠어요";
   questionTitleField.value = `${currentFieldNoteTitle} · 현장 지혜 검증 요청`;
   questionContentField.value = notes.slice(0, 450);
@@ -206,6 +209,14 @@ const renderAuthState = () => {
     : "로그인 후 질문을 남길 수 있어요.";
   submitPost.disabled = !loggedIn;
   submitQuestion.disabled = !loggedIn;
+  if (postAuthorHeader && postAuthorLabel) {
+    postAuthorHeader.hidden = !loggedIn;
+    postAuthorLabel.textContent = loggedIn ? `${currentUser.nickname} 님으로 작성` : "";
+  }
+  if (questionAuthorHeader && questionAuthorLabel) {
+    questionAuthorHeader.hidden = !loggedIn;
+    questionAuthorLabel.textContent = loggedIn ? `${currentUser.nickname} 님으로 작성` : "";
+  }
   if (loggedIn && !authNicknameField.hidden) authNicknameField.hidden = true;
 };
 
@@ -324,10 +335,11 @@ const editComment = async (comment, contentElement, statusHandler) => {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "댓글을 수정하지 못했어요.");
-    contentElement.textContent = content.trim();
+    comment.content = content.trim();
+    contentElement.textContent = comment.content;
     statusHandler("댓글을 수정했습니다.");
   } catch (error) {
-  if (error.message || "댓글을 불러오지 못했어요.", true);
+    statusHandler(error.message || "댓글을 수정하지 못했어요.", true);
   }
 };
 
@@ -485,7 +497,7 @@ const createQuestionCard = (question) => {
   commentsHeading.append(label, countLabel);
   const comments = document.createElement("ol");
   comments.className = "comment-list";
-  const commentForm = createCommentForm(question.id, comments, countLabel, setQuestionStatus);
+  const commentForm = createCommentForm(question.id, comments, countLabel, setQuestionStatus, "검증 의견");
   commentsPanel.append(commentsHeading, comments, commentForm);
 
   meta.append(name, date);
@@ -537,7 +549,7 @@ const loadQuestions = async () => {
   }
 };
 
-const createCommentForm = (postId, commentsList, countLabel, statusHandler = setCommentStatus) => {
+const createCommentForm = (postId, commentsList, countLabel, statusHandler = setCommentStatus, countName = "댓글") => {
   if (!currentUser) {
     const prompt = document.createElement("button");
     prompt.className = "comment-login-prompt";
@@ -585,6 +597,7 @@ const createCommentForm = (postId, commentsList, countLabel, statusHandler = set
   cancelReply.hidden = true;
   cancelReply.addEventListener("click", () => {
     replyTo.value = "";
+    replyLabel.textContent = "";
     replyLabel.hidden = true;
     cancelReply.hidden = true;
     content.placeholder = "댓글을 남겨주세요";
@@ -623,8 +636,9 @@ const createCommentForm = (postId, commentsList, countLabel, statusHandler = set
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "댓글을 등록하지 못했어요.");
       content.value = "";
+      cancelReply.click();
       statusHandler("댓글을 남겨주셔서 고마워요.");
-      await loadComments(postId, commentsList, countLabel, statusHandler);
+      await loadComments(postId, commentsList, countLabel, statusHandler, countName);
     } catch (error) {
       statusHandler(error.message || "댓글을 등록하지 못했어요.", true);
     } finally {
