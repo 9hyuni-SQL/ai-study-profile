@@ -395,6 +395,10 @@ const editQuestion = (question, cardElement) => {
 
   const form = document.createElement("form");
   form.className = "inline-question-edit-form";
+  const editStatus = document.createElement("p");
+  editStatus.className = "inline-edit-status";
+  editStatus.setAttribute("role", "status");
+  editStatus.setAttribute("aria-live", "polite");
 
   const makeField = (labelText, control) => {
     const wrapper = document.createElement("label");
@@ -482,6 +486,27 @@ const editQuestion = (question, cardElement) => {
   cancelButton.className = "cancel-reply inline-cancel-button";
   cancelButton.textContent = "취소";
 
+  const charCount = document.createElement("span");
+  charCount.className = "inline-edit-count";
+  charCount.setAttribute("aria-live", "polite");
+  const updateCharacterCount = () => {
+    const content = parsed
+      ? buildVerificationContent({
+          aiTool: aiToolSelect.value.trim(),
+          promptText: promptInput.value.trim(),
+          answerText: answerInput.value.trim(),
+          checkText: checkInput.value.trim(),
+        })
+      : rawContentInput.value.trim();
+    charCount.textContent = `${content.length.toLocaleString("ko-KR")}/2,000자`;
+    charCount.classList.toggle("is-near-limit", content.length >= 1600 && content.length < 2000);
+    charCount.classList.toggle("is-at-limit", content.length >= 2000);
+  };
+  const contentControls = parsed ? [aiToolSelect, promptInput, answerInput, checkInput] : [rawContentInput];
+  contentControls.forEach((control) => control.addEventListener("input", updateCharacterCount));
+  contentControls.forEach((control) => control.addEventListener("change", updateCharacterCount));
+  updateCharacterCount();
+
   const closeEditor = () => {
     form.remove();
     if (detailsContainer) detailsContainer.hidden = false;
@@ -489,8 +514,8 @@ const editQuestion = (question, cardElement) => {
   };
 
   cancelButton.addEventListener("click", closeEditor);
-  buttonRow.append(saveButton, cancelButton);
-  form.append(buttonRow);
+  buttonRow.append(charCount, saveButton, cancelButton);
+  form.append(editStatus, buttonRow);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -505,16 +530,26 @@ const editQuestion = (question, cardElement) => {
       : rawContentInput.value.trim();
 
     if (!title || !content) {
-      setQuestionStatus("제목과 내용을 모두 입력해 주세요.", true);
+      editStatus.textContent = "제목과 내용을 모두 입력해 주세요.";
+      editStatus.classList.add("is-error");
+      return;
+    }
+    if (title.length > 120) {
+      editStatus.textContent = "제목은 120자 이내로 입력해 주세요.";
+      editStatus.classList.add("is-error");
+      titleInput.focus();
       return;
     }
     if (content.length > 2000) {
-      setQuestionStatus("전체 내용을 2,000자 이내로 줄여주세요.", true);
+      editStatus.textContent = "전체 내용을 2,000자 이내로 줄여주세요.";
+      editStatus.classList.add("is-error");
       return;
     }
 
     saveButton.disabled = true;
     cancelButton.disabled = true;
+    editStatus.classList.remove("is-error");
+    editStatus.textContent = "수정 내용을 저장하고 있어요…";
     try {
       const response = await fetch(`/api/questions/${question.id}`, {
         method: "PATCH",
@@ -524,10 +559,17 @@ const editQuestion = (question, cardElement) => {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "질문을 수정하지 못했어요.");
+      question.title = result.title || title;
+      question.body = result.content || content;
+      question.content = `${question.title}\n${question.body}`;
+      const cardTitle = cardElement.querySelector(".question-title");
+      if (cardTitle) cardTitle.textContent = question.title;
+      if (detailsContainer) renderQuestionContent(question, question.body, detailsContainer);
+      closeEditor();
       setQuestionStatus("질문을 수정했습니다.");
-      await loadQuestions({ reset: false });
     } catch (error) {
-      setQuestionStatus(error.message || "질문을 수정하지 못했어요.", true);
+      editStatus.textContent = error.message || "질문을 수정하지 못했어요.";
+      editStatus.classList.add("is-error");
       saveButton.disabled = false;
       cancelButton.disabled = false;
     }
@@ -543,27 +585,6 @@ const editQuestion = (question, cardElement) => {
     cardElement.querySelector(".post-body")?.append(form);
   }
   titleInput.focus();
-};
-
-const unusedPromptQuestionEdit = async (question) => {
-  const title = window.prompt("질문 제목을 수정해 주세요.", question.title);
-  if (title === null) return;
-  const content = window.prompt("질문 내용을 수정해 주세요.", question.body || "");
-  if (content === null) return;
-  try {
-    const response = await fetch(`/api/questions/${question.id}`, {
-      method: "PATCH",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "질문을 수정하지 못했어요.");
-    setQuestionStatus("질문을 수정했습니다.");
-    await loadQuestions();
-  } catch (error) {
-    setQuestionStatus(error.message || "질문을 수정하지 못했어요.", true);
-  }
 };
 
 const editComment = async (comment, contentElement, statusHandler) => {
