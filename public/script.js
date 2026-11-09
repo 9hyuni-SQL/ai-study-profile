@@ -450,6 +450,7 @@ const loadComments = async (postId, commentsList, countLabel, statusHandler = se
 
     commentsList.replaceChildren();
     countLabel.textContent = `${countName} ${result.comments.length}개`;
+    const commentById = new Map(result.comments.map((entry) => [entry.id, entry]));
     for (const comment of result.comments) {
       const item = document.createElement("li");
       item.className = "comment-item";
@@ -470,7 +471,13 @@ const loadComments = async (postId, commentsList, countLabel, statusHandler = se
       date.textContent = formatPostDate(comment.created_at);
       const content = document.createElement("p");
       content.className = "comment-content";
-      content.textContent = comment.content;
+      if (comment.parent_comment_id) {
+        const parent = commentById.get(comment.parent_comment_id);
+        const mention = parent ? `@${parent.nickname} ` : "";
+        content.textContent = mention && !comment.content.startsWith(mention) ? `${mention}${comment.content}` : comment.content;
+      } else {
+        content.textContent = comment.content;
+      }
       meta.append(name, date);
       item.append(meta, content);
       if (currentUser) {
@@ -496,7 +503,9 @@ const loadComments = async (postId, commentsList, countLabel, statusHandler = se
           contentInput.placeholder = "답글을 작성해 주세요";
           contentInput.focus();
         });
-        actions.append(reply);
+        if (!comment.parent_comment_id) {
+          actions.append(reply);
+        }
         if (comment.user_id === currentUser.id) {
           const edit = document.createElement("button");
           edit.type = "button";
