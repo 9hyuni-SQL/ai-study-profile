@@ -231,6 +231,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .board-toolbar { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; color: #64748b; font-size: 14px; }
 .refresh-posts { padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; cursor: pointer; font-size: 13px; }
 .post-list { list-style: none; margin: 0; padding: 0; }
+.post-skeleton { display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid #e2e8f0; }
+.skeleton-avatar, .skeleton-lines i { display: block; background: linear-gradient(90deg, #e2e8f0 20%, #f1f5f9 40%, #e2e8f0 60%); background-size: 220% 100%; animation: skeleton-shimmer 1.35s ease-in-out infinite; }
+.skeleton-avatar { flex: 0 0 42px; width: 42px; height: 42px; border-radius: 8px; }
+.skeleton-lines { display: grid; flex: 1; gap: 8px; padding-top: 3px; }
+.skeleton-lines i { height: 12px; border-radius: 6px; }
+.skeleton-lines i:first-child { width: 28%; }
+.skeleton-lines i:nth-child(2) { width: 92%; }
+.skeleton-lines i:nth-child(3) { width: 68%; }
+@keyframes skeleton-shimmer { to { background-position: -220% 0; } }
+.list-pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 18px 0; }
+.load-more-button, .page-button { min-height: 40px; padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #334155; font-size: 14px; font-weight: 750; cursor: pointer; }
+.load-more-button { min-width: 150px; }
+.load-more-button:hover, .page-button:hover:not(:disabled) { border-color: #64748b; background: #f8fafc; }
+.page-button[aria-current="page"] { border-color: #1e293b; background: #1e293b; color: #fff; }
+.page-button:disabled, .load-more-button:disabled { cursor: wait; opacity: .6; }
 .post-item { display: flex; align-items: flex-start; gap: 14px; padding: 18px 0; border-bottom: 1px solid #e2e8f0; }
 .post-avatar { display: grid; flex: 0 0 42px; width: 42px; height: 42px; place-items: center; border-radius: 8px; background: #1e293b; color: #f4c66d; }
 .post-avatar svg { width: 22px; height: 22px; fill: currentColor; }

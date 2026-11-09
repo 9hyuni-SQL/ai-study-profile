@@ -63,7 +63,17 @@ let currentUser = null;
 let authMode = "register";
 let showingMyPosts = false;
 let currentFieldNoteTitle = "현장 노하우 정리";
+const GREETING_PAGE_SIZE = 10;
+const QUESTION_PAGE_SIZE = 10;
+let greetingPage = 1;
+let greetingHasMore = false;
+let greetingLoading = false;
+let questionPage = 1;
+let questionTotalPages = 1;
+let questionLoading = false;
 const CONVERTER_TOOL_NAME = "기호의 현장 수첩 AI 변환기";
+const postPagination = document.getElementById("post-pagination");
+const questionPagination = document.getElementById("question-pagination");
 
 const buildVerificationContent = ({ aiTool, promptText, answerText, checkText }) =>
   `사용한 AI: ${aiTool}\n\n내 질문:\n${promptText}\n\nAI 답변:\n${answerText}\n\n함께 확인할 점:\n${checkText}`;
@@ -353,6 +363,40 @@ const formatPostDate = (value) => {
   }).format(date);
 };
 
+const renderListSkeleton = (list, kind) => {
+  list.replaceChildren();
+  for (let index = 0; index < 3; index += 1) {
+    const item = document.createElement("li");
+    item.className = `post-skeleton ${kind}-skeleton`;
+    item.setAttribute("aria-hidden", "true");
+    item.innerHTML = '<span class="skeleton-avatar"></span><span class="skeleton-lines"><i></i><i></i><i></i></span>';
+    list.append(item);
+  }
+};
+
+const renderQuestionPagination = () => {
+  if (!questionPagination) return;
+  questionPagination.replaceChildren();
+  questionPagination.hidden = questionTotalPages <= 1 || showingMyPosts;
+  if (questionPagination.hidden) return;
+
+  for (let page = 1; page <= questionTotalPages; page += 1) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "page-button";
+    button.textContent = String(page);
+    button.setAttribute("aria-label", `검증 요청 ${page}페이지`);
+    button.setAttribute("aria-current", page === questionPage ? "page" : "false");
+    button.disabled = page === questionPage || questionLoading;
+    button.addEventListener("click", () => {
+      if (page === questionPage || questionLoading) return;
+      questionPage = page;
+      loadQuestions({ reset: false });
+    });
+    questionPagination.append(button);
+  }
+};
+
 const loadComments = async (postId, commentsList, countLabel, statusHandler = setCommentStatus, countName = "댓글") => {
   try {
     const response = await fetch(`/api/posts/${postId}/comments`);
@@ -571,15 +615,30 @@ const createQuestionCard = (question) => {
   return item;
 };
 
-const loadQuestions = async () => {
+const loadQuestions = async ({ reset = true } = {}) => {
+  if (questionLoading) return;
+  if (reset) questionPage = 1;
+  questionLoading = true;
   refreshQuestions.disabled = true;
+  renderQuestionPagination();
+  renderListSkeleton(questionList, "question");
+  setQuestionStatus("검증 요청을 불러오는 중입니다.");
   try {
-    const response = await fetch(showingMyPosts ? "/api/me/posts?category=question" : "/api/questions", { credentials: "same-origin" });
+    const endpoint = showingMyPosts ? "/api/me/posts?category=question" : "/api/questions";
+    const url = new URL(endpoint, location.origin);
+    url.searchParams.set("page", String(questionPage));
+    url.searchParams.set("limit", String(QUESTION_PAGE_SIZE));
+    const response = await fetch(url, { credentials: "same-origin" });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "질문을 불러오지 못했어요.");
 
     questionList.replaceChildren();
-    questionCount.textContent = showingMyPosts ? `내 질문 ${result.posts.length}개` : `모두 ${result.posts.length}개의 질문`;
+    questionPage = result.page || questionPage;
+    questionTotalPages = Math.max(1, result.totalPages || 1);
+    questionPage = Math.min(questionPage, questionTotalPages);
+    questionCount.textContent = showingMyPosts
+      ? `내 질문 ${result.total ?? result.posts.length}개`
+      : `전체 ${result.total ?? result.posts.length}개 중 ${result.posts.length}개 · ${questionPage}/${questionTotalPages}페이지`;
     if (result.posts.length === 0) {
       const emptyItem = document.createElement("li");
       emptyItem.className = "empty-posts";
@@ -590,11 +649,15 @@ const loadQuestions = async () => {
         questionList.append(createQuestionCard(question));
       }
     }
+    renderQuestionPagination();
     setQuestionStatus();
   } catch (error) {
     setQuestionStatus(error.message || "질문을 불러오지 못했어요. 새로고침해 주세요.", true);
+    questionList.replaceChildren();
   } finally {
+    questionLoading = false;
     refreshQuestions.disabled = false;
+    renderQuestionPagination();
   }
 };
 
@@ -697,25 +760,9 @@ const createCommentForm = (postId, commentsList, countLabel, statusHandler = set
   return form;
 };
 
-const loadPosts = async () => {
-  refreshPosts.disabled = true;
-  try {
-    const endpoint = showingMyPosts ? "/api/me/posts?category=greeting" : "/api/posts";
-    const response = await fetch(endpoint, { credentials: "same-origin" });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "게시글을 불러오지 못했어요.");
-
-    postList.replaceChildren();
-    postCount.textContent = showingMyPosts ? `내 가입인사 ${result.posts.length}개` : `${result.posts.length}개의 가입인사`;
-    if (result.posts.length === 0) {
-      const emptyItem = document.createElement("li");
-      emptyItem.className = "empty-posts";
-      emptyItem.textContent = "아직 가입인사가 없어요. 첫 번째 인사를 남겨주세요.";
-      postList.append(emptyItem);
-    } else {
-      for (const post of result.posts) {
-        const item = document.createElement("li");
-        item.className = "post-item";
+const createPostCard = (post) => {
+  const item = document.createElement("li");
+  item.className = "post-item";
 
   const avatar = document.createElement("span");
   avatar.className = "post-avatar";
@@ -793,14 +840,71 @@ const loadPosts = async () => {
         commentsPanel.append(commentsHeading, commentsList, commentForm);
         body.append(commentsPanel);
         item.append(avatar, body);
-        postList.append(item);
-      }
+  return item;
+};
+
+const renderGreetingPagination = () => {
+  if (!postPagination) return;
+  postPagination.replaceChildren();
+  postPagination.hidden = showingMyPosts || !greetingHasMore;
+  if (postPagination.hidden) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "load-more-button";
+  button.textContent = "인사 더보기";
+  button.disabled = greetingLoading;
+  button.addEventListener("click", loadMorePosts);
+  postPagination.append(button);
+};
+
+const loadMorePosts = async () => {
+  if (greetingLoading || !greetingHasMore || showingMyPosts) return;
+  await loadPosts({ append: true });
+};
+
+const loadPosts = async ({ append = false } = {}) => {
+  if (greetingLoading) return;
+  if (!append) {
+    greetingPage = 1;
+    greetingHasMore = false;
+  }
+  greetingLoading = true;
+  refreshPosts.disabled = true;
+  if (append) renderGreetingPagination();
+  else renderListSkeleton(postList, "greeting");
+  setBoardStatus("가입인사를 불러오는 중입니다.");
+  try {
+    const endpoint = showingMyPosts ? "/api/me/posts?category=greeting" : "/api/posts";
+    const url = new URL(endpoint, location.origin);
+    url.searchParams.set("page", String(greetingPage));
+    url.searchParams.set("limit", String(GREETING_PAGE_SIZE));
+    const response = await fetch(url, { credentials: "same-origin" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "게시글을 불러오지 못했어요.");
+
+    if (!append) postList.replaceChildren();
+    if (result.posts.length === 0 && !append) {
+      const emptyItem = document.createElement("li");
+      emptyItem.className = "empty-posts";
+      emptyItem.textContent = "아직 가입인사가 없어요. 첫 번째 인사를 남겨주세요.";
+      postList.append(emptyItem);
+    } else {
+      for (const post of result.posts) postList.append(createPostCard(post));
     }
+    greetingPage = result.page || greetingPage;
+    greetingHasMore = Boolean(result.hasMore);
+    const shown = showingMyPosts ? postList.querySelectorAll(":scope > .post-item").length : Math.min(greetingPage * GREETING_PAGE_SIZE, result.total ?? greetingPage * GREETING_PAGE_SIZE);
+    postCount.textContent = showingMyPosts
+      ? `내 가입인사 ${result.total ?? result.posts.length}개`
+      : `${result.total ?? result.posts.length}개의 가입인사 중 ${shown}개`;
     setBoardStatus();
   } catch (error) {
     setBoardStatus(error.message || "게시글을 불러오지 못했어요. 잠시 후 새로고침해 주세요.", true);
+    if (!append) postList.replaceChildren();
   } finally {
+    greetingLoading = false;
     refreshPosts.disabled = false;
+    renderGreetingPagination();
   }
 };
 
