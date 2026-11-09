@@ -29,6 +29,8 @@ const questionTitleField = document.getElementById("question-title");
 const questionContentField = document.getElementById("question-content");
 const questionAnswerField = document.getElementById("question-answer");
 const questionCheckField = document.getElementById("question-check");
+const postContentCount = document.getElementById("post-content-count");
+const questionTotalCount = document.getElementById("question-total-count");
 const questionList = document.getElementById("question-list");
 const questionCount = document.getElementById("question-count");
 const questionStatus = document.getElementById("question-status");
@@ -77,6 +79,49 @@ const questionPagination = document.getElementById("question-pagination");
 
 const buildVerificationContent = ({ aiTool, promptText, answerText, checkText }) =>
   `사용한 AI: ${aiTool}\n\n내 질문:\n${promptText}\n\nAI 답변:\n${answerText}\n\n함께 확인할 점:\n${checkText}`;
+
+const updateCharacterCount = (field, counter, limit, { threshold = 0.8, prefix = "" } = {}) => {
+  if (!field || !counter) return;
+  const count = field.value.length;
+  counter.textContent = `${prefix}${count.toLocaleString("ko-KR")}/${limit.toLocaleString("ko-KR")}자`;
+  counter.classList.toggle("is-near-limit", count >= Math.ceil(limit * threshold) && count < limit);
+  counter.classList.toggle("is-at-limit", count >= limit);
+};
+
+function bindCharacterCount(field, counter, limit, options) {
+  if (!field || !counter) return;
+  const update = () => updateCharacterCount(field, counter, limit, options);
+  field.addEventListener("input", update);
+  field.addEventListener("compositionend", update);
+  update();
+}
+
+bindCharacterCount(contentField, postContentCount, 1000);
+bindCharacterCount(questionTitleField, document.getElementById("question-title-count"), 120);
+bindCharacterCount(questionContentField, document.getElementById("question-content-count"), 450);
+bindCharacterCount(questionAnswerField, document.getElementById("question-answer-count"), 1000);
+bindCharacterCount(questionCheckField, document.getElementById("question-check-count"), 350);
+
+const updateQuestionTotalCount = () => {
+  if (!questionTotalCount) return;
+  const values = [questionAiToolField.value.trim(), questionContentField.value.trim(), questionAnswerField.value.trim(), questionCheckField.value.trim()];
+  const count = values.every(Boolean) ? buildVerificationContent({
+    aiTool: values[0],
+    promptText: values[1],
+    answerText: values[2],
+    checkText: values[3],
+  }).length : values.reduce((total, value) => total + value.length, 0);
+  questionTotalCount.textContent = `${count.toLocaleString("ko-KR")}/2,000자`;
+  questionTotalCount.classList.toggle("is-near-limit", count >= 1600 && count < 2000);
+  questionTotalCount.classList.toggle("is-at-limit", count >= 2000);
+};
+
+[questionAiToolField, questionContentField, questionAnswerField, questionCheckField].forEach((field) => {
+  field.addEventListener("input", updateQuestionTotalCount);
+  field.addEventListener("change", updateQuestionTotalCount);
+  field.addEventListener("compositionend", updateQuestionTotalCount);
+});
+updateQuestionTotalCount();
 
 const fieldNotePresets = {
   quality: {
