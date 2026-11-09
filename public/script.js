@@ -387,9 +387,6 @@ const loadComments = async (postId, commentsList, countLabel, statusHandler = se
       if (currentUser) {
         const actions = document.createElement("div");
         actions.className = "comment-actions";
-    const author = document.createElement("span");
-    author.className = "owned-content-label";
-    author.textContent = "내 질문";
         const reply = document.createElement("button");
         reply.type = "button";
         reply.className = "reply-comment";
@@ -505,14 +502,17 @@ const createQuestionCard = (question) => {
   if (currentUser && question.user_id === currentUser.id) {
     const actions = document.createElement("div");
     actions.className = "owned-content-actions";
-        const edit = document.createElement("button");
+    const author = document.createElement("span");
+    author.className = "owned-content-label";
+    author.textContent = "내 질문";
+    const edit = document.createElement("button");
     edit.type = "button";
     edit.textContent = "질문 수정";
     edit.addEventListener("click", () => editQuestion(question));
     const remove = document.createElement("button");
     remove.type = "button";
     remove.textContent = "질문 삭제";
-    remove.addEventListener("click", () => deleteOwnedContent(`/api/posts/${question.id}`, item, setQuestionStatus));
+    remove.addEventListener("click", () => deleteOwnedContent(`/api/questions/${question.id}`, item, setQuestionStatus));
     actions.append(author, edit, remove);
     body.append(actions);
   }
