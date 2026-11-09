@@ -56,6 +56,18 @@ SOP 변환기는 브라우저에서 입력을 구조화하는 시뮬레이터이
 - Cloudflare Workers, Workers Static Assets, Cloudflare D1
 - Wrangler CLI, D1 SQL migrations, Node.js 20 이상
 
+## 분석 및 전환 측정
+
+**Google Analytics 4와 Google Tag Manager는 분석 동의 후에만 로드됩니다.** 동의 전에는 Consent Mode v2의 `analytics_storage`, 광고 관련 동의(`ad_storage`, `ad_user_data`, `ad_personalization`)를 `denied`로 설정하고 GTM/GA 태그를 로드하지 않습니다. 방문자는 하단 배너에서 동의하거나 거부할 수 있으며, 푸터의 개인정보·분석 설정에서 선택을 변경할 수 있습니다.
+
+- GA4 Measurement ID: `G-0HFX4KE2GH`
+- GTM Container ID: `GTM-PQQFR7KV`
+- GTM Custom Event: `site_conversion`; 변수 `conversion_name` 값은 `sign_up`, `login`, `greeting_submit`, `question_submit`입니다.
+- GA4에는 동일한 이름의 표준 이벤트가 동의 후 직접 전송됩니다. GTM에서 GA4 이벤트 태그를 추가한다면 같은 이벤트를 다시 전송하지 않아 중복 집계를 피하세요.
+- 이벤트에는 이메일, 닉네임, 질문·게시글 내용 등 개인정보를 넣지 않습니다.
+
+Google Tag Manager 컨테이너에는 `site_conversion` Custom Event Trigger를 만들어 필요한 추가 태그에 연결할 수 있습니다. GA4 전환으로 보고 싶은 이벤트는 Analytics 관리 화면에서 해당 이벤트를 key event로 표시하세요. 개인정보 처리방침에 Google Analytics 사용, 처리 목적, 동의 철회 방법을 반영한 뒤 배포해야 합니다.
+
 ## 기여 및 라이선스
 
 **버그 제보와 개선 제안은 [GitHub Issues](https://github.com/9hyuni-SQL/ai-study-profile/issues)에 남겨 주세요.** 이 저장소는 MIT License로 배포되며 자세한 내용은 [`LICENSE`](LICENSE)를 확인하세요.

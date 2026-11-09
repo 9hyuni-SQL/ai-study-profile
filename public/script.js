@@ -76,6 +76,90 @@ let questionLoading = false;
 const CONVERTER_TOOL_NAME = "기호의 현장 수첩 AI 변환기";
 const postPagination = document.getElementById("post-pagination");
 const questionPagination = document.getElementById("question-pagination");
+const analyticsConsentBanner = document.getElementById("analytics-consent");
+const analyticsConsentAccept = document.getElementById("analytics-consent-accept");
+const analyticsConsentReject = document.getElementById("analytics-consent-reject");
+const analyticsConsentOpen = document.getElementById("privacy-settings-open");
+const ANALYTICS_CONSENT_KEY = "ai-profile-analytics-consent-v1";
+const GTM_CONTAINER_ID = "GTM-PQQFR7KV";
+const GA4_MEASUREMENT_ID = "G-0HFX4KE2GH";
+
+window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+window.gtag("consent", "default", {
+  analytics_storage: "denied",
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+  wait_for_update: 500,
+});
+
+const pushAnalyticsEvent = (event, parameters = {}) => {
+  if (localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "granted") return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: "site_conversion", conversion_name: event, ...parameters });
+  window.gtag("event", event, parameters);
+};
+
+const setAnalyticsConsent = (granted) => {
+  const consent = granted ? "granted" : "denied";
+  localStorage.setItem(ANALYTICS_CONSENT_KEY, consent);
+  window.gtag("consent", "update", {
+    analytics_storage: consent,
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+  analyticsConsentBanner.hidden = true;
+  if (granted) loadGoogleTagManager();
+};
+
+const loadGoogleTagManager = () => {
+  if (document.getElementById("google-analytics-script")) return;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag("js", new Date());
+  window.gtag("config", GA4_MEASUREMENT_ID);
+
+  const analyticsScript = document.createElement("script");
+  analyticsScript.id = "google-analytics-script";
+  analyticsScript.async = true;
+  analyticsScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
+  document.head.append(analyticsScript);
+
+  if (!document.getElementById("google-tag-manager-script")) {
+    window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+    const tagManagerScript = document.createElement("script");
+    tagManagerScript.id = "google-tag-manager-script";
+    tagManagerScript.async = true;
+    tagManagerScript.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_CONTAINER_ID}`;
+    document.head.append(tagManagerScript);
+  }
+};
+
+const initializeAnalyticsConsent = () => {
+  const consent = localStorage.getItem(ANALYTICS_CONSENT_KEY);
+  if (consent === "granted") {
+    window.gtag("consent", "update", {
+      analytics_storage: "granted",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
+    loadGoogleTagManager();
+  } else if (consent === "denied") {
+    analyticsConsentBanner.hidden = true;
+  } else {
+    analyticsConsentBanner.hidden = false;
+  }
+};
+
+analyticsConsentAccept.addEventListener("click", () => setAnalyticsConsent(true));
+analyticsConsentReject.addEventListener("click", () => setAnalyticsConsent(false));
+analyticsConsentOpen.addEventListener("click", () => {
+  analyticsConsentBanner.hidden = false;
+  analyticsConsentAccept.focus();
+});
+initializeAnalyticsConsent();
 
 const buildVerificationContent = ({ aiTool, promptText, answerText, checkText }) =>
   `사용한 AI: ${aiTool}\n\n내 질문:\n${promptText}\n\nAI 답변:\n${answerText}\n\n함께 확인할 점:\n${checkText}`;
@@ -543,27 +627,6 @@ const editQuestion = (question, cardElement) => {
     cardElement.querySelector(".post-body")?.append(form);
   }
   titleInput.focus();
-};
-
-const unusedPromptQuestionEdit = async (question) => {
-  const title = window.prompt("질문 제목을 수정해 주세요.", question.title);
-  if (title === null) return;
-  const content = window.prompt("질문 내용을 수정해 주세요.", question.body || "");
-  if (content === null) return;
-  try {
-    const response = await fetch(`/api/questions/${question.id}`, {
-      method: "PATCH",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "질문을 수정하지 못했어요.");
-    setQuestionStatus("질문을 수정했습니다.");
-    await loadQuestions();
-  } catch (error) {
-    setQuestionStatus(error.message || "질문을 수정하지 못했어요.", true);
-  }
 };
 
 const editComment = async (comment, contentElement, statusHandler) => {
@@ -1176,6 +1239,7 @@ postForm.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error(result.error || "게시글을 저장하지 못했어요.");
     postForm.reset();
     await loadPosts();
+    pushAnalyticsEvent("greeting_submit", { content_category: "greeting" });
     setBoardStatus("소중한 인사를 남겨주셔서 고마워요.");
   } catch (error) {
     setBoardStatus(error.message || "글을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.", true);
@@ -1221,6 +1285,7 @@ questionForm.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error(result.error || "질문을 등록하지 못했어요.");
     questionForm.reset();
     await loadQuestions();
+    pushAnalyticsEvent("question_submit", { content_category: "question" });
     setQuestionStatus("AI 답변 검증 요청을 등록했어요. 함께 확인해볼게요.");
   } catch (error) {
     setQuestionStatus(error.message || "질문을 등록하지 못했어요. 다시 시도해 주세요.", true);
@@ -1286,6 +1351,7 @@ authForm.addEventListener("submit", async (event) => {
     authMenu.hidden = true;
     closeAuthPanel();
     renderAuthState();
+    pushAnalyticsEvent(authMode === "login" ? "login" : "sign_up", { method: "email" });
     setBoardStatus(`${currentUser.nickname} 님, 환영합니다.`);
     await Promise.all([loadPosts(), loadQuestions()]);
   } catch (error) {

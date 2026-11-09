@@ -20,7 +20,7 @@
   <meta name="twitter:image" content="https://ai-study-profile.9hyuni.workers.dev/images/intern_still_1.jpg">
   <meta name="naver-site-verification" content="5541e33d2f02b4ad7a07fa61fa7176520b193c60" />
   <title>AI 인생동행 : SENIOR AI 2.0 — 37년의 경험, AI로 다시 출근합니다</title>
-  <link rel="stylesheet" href="style.css?v=senior-ai-v2-20261109">
+  <link rel="stylesheet" href="style.css?v=senior-ai-v2-analytics-consent-20261109">
 </head>
 <body>
   <a class="skip-link" href="#main-content">본문으로 바로가기</a>
@@ -406,10 +406,22 @@
 
     <footer class="site-footer">
       <a class="footer-brand" href="#home">AI 인생동행 : SENIOR AI 2.0</a>
+      <button class="privacy-settings-button" id="privacy-settings-open" type="button">개인정보·분석 설정</button>
       <span>37년의 현장 경험, AI라는 날개를 달고 다시 출근합니다.</span>
       <span class="footer-credit">영화 「인턴」의 세대 상생 철학과 함께하는 시니어 지식 자산화 플랫폼</span>
     </footer>
   </main>
-  <script src="script.js?v=senior-ai-v2-20261109"></script>
+  <section class="consent-banner" id="analytics-consent" role="dialog" aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-description" hidden>
+    <div class="consent-copy">
+      <h2 id="analytics-consent-title">분석 쿠키 동의</h2>
+      <p id="analytics-consent-description">방문 경로와 사이트 이용 현황을 파악하고 서비스를 개선하기 위해 Google Analytics를 사용합니다. 동의하면 Google로 분석 정보가 전송됩니다. 언제든 아래 개인정보·분석 설정에서 선택을 바꿀 수 있습니다.</p>
+      <a href="https://policies.google.com/privacy?hl=ko" target="_blank" rel="noopener noreferrer">Google 개인정보처리방침</a>
+    </div>
+    <div class="consent-actions">
+      <button type="button" class="consent-reject" id="analytics-consent-reject">거부</button>
+      <button type="button" class="consent-accept" id="analytics-consent-accept">동의</button>
+    </div>
+  </section>
+  <script src="script.js?v=analytics-consent-20261109"></script>
 </body>
 </html>
