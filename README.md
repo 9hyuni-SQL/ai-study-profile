@@ -40,11 +40,7 @@ npx wrangler deploy
 
 **Cloudflare Workers는 `wrangler.jsonc`의 `assets.directory` 설정에 따라 `public/`만 정적 자산으로 배포합니다.** 배포할 프런트엔드는 `public/index.html`, `public/style.css`, `public/script.js`와 그 안에서 참조하는 `public/images/` 및 관련 자산입니다. Worker API는 `src/worker.js`, D1 스키마는 `migrations/`에 있습니다.
 
-원본 저장소 루트와 `public/`에 동일한 이름의 화면 파일이 남아 있을 수 있지만, **배포 정본은 `public/`**입니다. 변경을 적용할 때는 배포 대상 파일을 먼저 수정하고, 루트 사본을 정리할 때는 별도 비교·이력 검토를 거쳐 삭제하세요.
-
-루트의 `index.html`, `style.css`, `script.js`는 로컬 작업 사본이며, 배포 정본인 `public/`과 다를 수 있습니다. 현재 루트 사본에는 아직 배포되지 않은 SNS 작성 UI 변경도 있으므로 두 벌을 병합하기 전에는 삭제하지 마세요. 정적 에셋의 중복 루트 사본은 사용하지 말고, 배포 및 개발에서는 `public/`만 사용하세요.
-
-`server.py`와 `serve.ps1`은 과거 로컬 실행 경로입니다. 현재 Worker의 `/api/auth/*`, `/api/me/posts`, 수정·삭제 API와 동작이 다를 수 있으므로 이 앱의 기능 검증이나 배포 준비에는 사용하지 마세요.
+정적 배포 에셋의 정본은 `public/`입니다. 루트의 동일 이미지·음악·회사 소개 페이지·오디오 스크립트 사본은 제거했습니다. 이전 로컬 프런트엔드인 `index.html`, `style.css`, `script.js`와 이전 실행기 `server.py`, `serve.ps1`은 변경 이력을 보존하기 위해 `legacy/`로 옮겼습니다. `legacy/`는 배포되지 않으며 현재 개발·배포에서는 사용하지 마세요.
 
 ## 핵심 기능
 
