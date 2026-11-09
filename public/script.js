@@ -423,10 +423,45 @@ const loadComments = async (postId, commentsList, countLabel, statusHandler = se
       }
       commentsList.append(item);
     }
+    return true;
   } catch (error) {
     statusHandler(error.message || "댓글을 불러오지 못했어요.", true);
+    countLabel.textContent = "불러오지 못함";
+    return false;
   }
 
+};
+
+const bindLazyComments = ({ button, list, form, countLabel, load, noun }) => {
+  let loaded = false;
+  let loading = false;
+  list.hidden = true;
+  form.hidden = true;
+
+  button.addEventListener("click", async () => {
+    const expanded = button.getAttribute("aria-expanded") === "true";
+    if (expanded) {
+      list.hidden = true;
+      form.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+      button.textContent = `${noun} 보기`;
+      return;
+    }
+
+    list.hidden = false;
+    form.hidden = false;
+    button.setAttribute("aria-expanded", "true");
+    button.textContent = `${noun} 접기`;
+    if (loaded || loading) return;
+
+    loading = true;
+    countLabel.textContent = "불러오는 중…";
+    button.disabled = true;
+    loaded = await load();
+    loading = false;
+    button.disabled = false;
+    if (!loaded) button.textContent = `${noun} 다시 불러오기`;
+  });
 };
 
 const createQuestionCard = (question) => {
@@ -490,11 +525,26 @@ const createQuestionCard = (question) => {
   label.textContent = "함께 검증한 의견";
   const countLabel = document.createElement("span");
   countLabel.className = "comment-count";
-  countLabel.textContent = "검증 의견 0개";
-  commentsHeading.append(label, countLabel);
+  countLabel.textContent = "아직 불러오지 않음";
+  const toggleComments = document.createElement("button");
+  toggleComments.className = "toggle-comments";
+  toggleComments.type = "button";
+  toggleComments.textContent = "검증 의견 보기";
+  toggleComments.setAttribute("aria-expanded", "false");
+  toggleComments.setAttribute("aria-controls", `question-comments-${question.id}`);
+  commentsHeading.append(label, countLabel, toggleComments);
   const comments = document.createElement("ol");
   comments.className = "comment-list";
+  comments.id = `question-comments-${question.id}`;
   const commentForm = createCommentForm(question.id, comments, countLabel, setQuestionStatus, "검증 의견");
+  bindLazyComments({
+    button: toggleComments,
+    list: comments,
+    form: commentForm,
+    countLabel,
+    noun: "검증 의견",
+    load: () => loadComments(question.id, comments, countLabel, setQuestionStatus, "검증 의견"),
+  });
   commentsPanel.append(commentsHeading, comments, commentForm);
 
   meta.append(name, date);
@@ -518,7 +568,6 @@ const createQuestionCard = (question) => {
   }
   body.append(commentsPanel);
   item.append(avatar, body);
-  loadComments(question.id, comments, countLabel, setQuestionStatus, "검증 의견");
   return item;
 };
 
@@ -698,9 +747,20 @@ const loadPosts = async () => {
         commentsLabel.textContent = "댓글";
         const countLabel = document.createElement("span");
         countLabel.className = "comment-count";
-        countLabel.textContent = "댓글 0개";
-        commentsHeading.append(commentsLabel, countLabel);
+        countLabel.textContent = "아직 불러오지 않음";
+        const toggleComments = document.createElement("button");
+        toggleComments.className = "toggle-comments";
+        toggleComments.type = "button";
+        toggleComments.textContent = "댓글 보기";
+        toggleComments.setAttribute("aria-expanded", "false");
+        toggleComments.setAttribute("aria-controls", `post-comments-${post.id}`);
+        commentsHeading.append(commentsLabel, countLabel, toggleComments);
         const commentsList = document.createElement("ol");
+        commentsList.className = "comment-list";
+        commentsList.id = `post-comments-${post.id}`;
+        commentsList.hidden = true;
+        let commentsLoaded = false;
+        let commentsLoading = false;
         meta.append(name, date);
         if (currentUser && post.user_id === currentUser.id) {
           const actions = document.createElement("div");
@@ -721,13 +781,19 @@ const loadPosts = async () => {
         } else {
           body.append(meta, content);
         }
-        commentsList.className = "comment-list";
         const commentForm = createCommentForm(post.id, commentsList, countLabel, setBoardStatus);
+        bindLazyComments({
+          button: toggleComments,
+          list: commentsList,
+          form: commentForm,
+          countLabel,
+          noun: "댓글",
+          load: () => loadComments(post.id, commentsList, countLabel),
+        });
         commentsPanel.append(commentsHeading, commentsList, commentForm);
         body.append(commentsPanel);
         item.append(avatar, body);
         postList.append(item);
-        loadComments(post.id, commentsList, countLabel);
       }
     }
     setBoardStatus();
@@ -884,8 +950,6 @@ authForm.addEventListener("submit", async (event) => {
 });
 
 loadCurrentUser();
-loadPosts();
-loadQuestions();
 
 // Mobile Navigation Toggle
 const navToggle = document.getElementById("nav-toggle");
