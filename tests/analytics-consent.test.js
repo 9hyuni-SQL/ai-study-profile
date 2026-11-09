@@ -25,7 +25,6 @@ test("consent defaults to denied and both tags load only from the consent action
   assert.match(script, /analytics_storage:\s*consent/);
   assert.ok(script.includes("if (granted) loadGoogleTagManager();"));
   assert.ok(initialization > defaultConsent);
-  assert.match(script, /id = "google-analytics-script"/);
   assert.match(script, /id = "google-tag-manager-script"/);
 });
 
@@ -46,4 +45,10 @@ test("GTM script and analytics endpoints are allowed by the Worker CSP and docum
   assert.match(worker, /connect-src[^\"]*google-analytics\.com/);
   assert.match(readme, /GTM Custom Event: `site_conversion`/);
   assert.match(readme, /중복 집계를 피하세요/);
+});
+
+test("GA4 is sent only through GTM (no direct gtag config/script to avoid double counting)", () => {
+  assert.doesNotMatch(script, /gtag\/js\?id=/);
+  assert.doesNotMatch(script, /window\.gtag\("config"/);
+  assert.doesNotMatch(script, /window\.gtag\("event"/);
 });

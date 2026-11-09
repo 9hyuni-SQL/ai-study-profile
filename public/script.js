@@ -98,7 +98,6 @@ const pushAnalyticsEvent = (event, parameters = {}) => {
   if (localStorage.getItem(ANALYTICS_CONSENT_KEY) !== "granted") return;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ event: "site_conversion", conversion_name: event, ...parameters });
-  window.gtag("event", event, parameters);
 };
 
 const setAnalyticsConsent = (granted) => {
@@ -114,26 +113,16 @@ const setAnalyticsConsent = (granted) => {
   if (granted) loadGoogleTagManager();
 };
 
+// GA4(GA4_MEASUREMENT_ID)는 GTM 컨테이너 내부 Google 태그 1개로만 전송 (직접 gtag 전송 제거 -> 중복 집계 방지)
 const loadGoogleTagManager = () => {
-  if (document.getElementById("google-analytics-script")) return;
+  if (document.getElementById("google-tag-manager-script")) return;
   window.dataLayer = window.dataLayer || [];
-  window.gtag("js", new Date());
-  window.gtag("config", GA4_MEASUREMENT_ID);
-
-  const analyticsScript = document.createElement("script");
-  analyticsScript.id = "google-analytics-script";
-  analyticsScript.async = true;
-  analyticsScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
-  document.head.append(analyticsScript);
-
-  if (!document.getElementById("google-tag-manager-script")) {
-    window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
-    const tagManagerScript = document.createElement("script");
-    tagManagerScript.id = "google-tag-manager-script";
-    tagManagerScript.async = true;
-    tagManagerScript.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_CONTAINER_ID}`;
-    document.head.append(tagManagerScript);
-  }
+  window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+  const tagManagerScript = document.createElement("script");
+  tagManagerScript.id = "google-tag-manager-script";
+  tagManagerScript.async = true;
+  tagManagerScript.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_CONTAINER_ID}`;
+  document.head.append(tagManagerScript);
 };
 
 const initializeAnalyticsConsent = () => {
