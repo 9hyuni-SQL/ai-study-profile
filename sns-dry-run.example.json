@@ -1,0 +1,16 @@
+{
+  "nickname": "9hyuni",
+  "content": "[AI 인생동행 : SENIOR AI 2.0]\n\n시니어의 경험과 AI를 연결해, 새로운 배움과 도전을 함께 만들어갑니다.\n\n작은 시작이 쌓여 더 나은 내일이 됩니다. 오늘의 경험을 나누고, 함께 한 걸음을 내디뎌 보세요.\n\n#AI인생동행 #시니어AI #함께배우기",
+  "channels": ["threads", "instagram"],
+  "mode": "scheduled",
+  "scheduled_at": "2026-12-01T09:00:00+09:00",
+  "threads_token_configured": false,
+  "instagram_token_configured": false,
+  "image": {
+    "path": "C:/Users/song9/AppData/Local/Cline/web/images/step1_ai_intro.jpg",
+    "bytes": 79239,
+    "content_type": "image/jpeg",
+    "width": 1000,
+    "height": 666
+  }
+}

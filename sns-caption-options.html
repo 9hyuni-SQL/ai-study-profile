@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>본문 이미지·문안 선택 미리보기</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, "Malgun Gothic", sans-serif; color: #172033; background: #f3f5f8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px 16px 48px; }
+    main { width: min(100%, 1120px); margin: auto; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); }
+    .intro, .safety { color: #59677b; line-height: 1.65; }
+    .safety { padding: 12px 14px; border: 1px solid #f4c66a; border-radius: 10px; background: #fff8e7; color: #704d00; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 390px), 1fr)); gap: 16px; margin-top: 20px; }
+    .option { overflow: hidden; border: 1px solid #d9e0e9; border-radius: 14px; background: #fff; box-shadow: 0 4px 16px #12223a0a; }
+    .option.selected { border: 2px solid #2864c5; box-shadow: 0 0 0 3px #2864c51a; }
+    .option img { display: block; width: 100%; height: 245px; object-fit: cover; background: #edf1f5; }
+    .option-body { padding: 16px; }
+    .option h2 { margin: 0 0 8px; font-size: 1.1rem; }
+    .source { margin: 0 0 12px; color: #6b7789; font-size: .85rem; }
+    .caption { min-height: 134px; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+    .count { margin: 10px 0; color: #6b7789; font-size: .85rem; }
+    .choose { width: 100%; min-height: 44px; border: 1px solid #c8d1de; border-radius: 9px; background: white; font: inherit; cursor: pointer; }
+    .selected .choose { border-color: #2864c5; background: #2864c5; color: white; }
+    .bottom { margin-top: 22px; padding: 18px; border: 1px solid #d9e0e9; border-radius: 12px; background: white; }
+    .bottom h2 { margin: 0 0 8px; font-size: 1.1rem; }
+    #selected-copy { min-height: 90px; padding: 12px; border-radius: 8px; background: #f5f7fa; white-space: pre-wrap; line-height: 1.7; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .actions button { min-height: 42px; padding: 8px 14px; border: 1px solid #c8d1de; border-radius: 9px; background: white; font: inherit; cursor: pointer; }
+    .publish-panel, .history-panel { margin-top: 20px; padding: 18px; border: 1px solid #d9e0e9; border-radius: 12px; background: #fff; }
+    .publish-panel h2, .history-panel h2 { margin: 0 0 12px; font-size: 1.1rem; }
+    .field { display: grid; gap: 6px; margin: 12px 0; }
+    .field input, .field select { width: 100%; min-height: 42px; padding: 9px 10px; border: 1px solid #c8d1de; border-radius: 8px; font: inherit; }
+    .mode-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .mode-row label { display: flex; align-items: center; gap: 7px; }
+    .primary { background: #1f5cae !important; color: #fff; border-color: #1f5cae !important; }
+    .history-item { padding: 12px 0; border-top: 1px solid #e4e9f0; }
+    .history-item a { overflow-wrap: anywhere; }
+    .history-item p { margin: 6px 0; white-space: pre-wrap; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .small-note { color: #657286; font-size: .88rem; line-height: 1.55; }
+    #status { min-height: 1.5em; color: #315f42; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>본문 이미지와 게시 문안 선택</h1>
+    <p class="intro">사이트 본문에 있는 이미지 4개와 각 이미지 내용에 맞춘 문안 초안입니다. 이미지와 문안을 함께 비교하고 하나를 선택하세요.</p>
+    <p class="safety"><strong>검토용 미리보기</strong> — 아래 문구는 본문 설명을 바탕으로 만든 초안입니다. 게시·예약되지 않으며, 사실·표현을 확인한 뒤 사용하세요.</p>
+    <section class="grid" id="options" aria-label="이미지와 문안 후보"></section>
+    <section class="bottom" aria-live="polite">
+      <h2>선택한 이미지와 문안</h2>
+      <p id="selection-hint">후보 카드에서 선택 버튼을 눌러 주세요.</p>
+      <div id="selected-copy"></div>
+      <div class="actions">
+        <button id="copy" type="button" disabled>선택 문안 복사</button>
+        <button id="clear" type="button" disabled>선택 해제</button>
+      </div>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+    <section class="publish-panel" aria-labelledby="publish-heading">
+      <h2 id="publish-heading">발행 방식 미리보기</h2>
+      <p class="small-note">선택한 사진·문안을 즉시 발행 또는 예약 발행 시나리오로 구성합니다. 이 페이지는 실제 게시하지 않습니다. 성공 URL은 실제 게시 성공을 확인한 뒤에만 기록하세요.</p>
+      <div class="mode-row">
+        <label><input type="radio" name="publish-mode" value="immediate" checked> 즉시 발행 시나리오</label>
+        <label><input type="radio" name="publish-mode" value="scheduled"> 예약 발행 시나리오</label>
+      </div>
+      <div class="field" id="schedule-field" hidden><label for="schedule-at">예약 일시</label><input id="schedule-at" type="datetime-local"></div>
+      <div class="field">
+        <label for="channels">대상 채널 (복수 선택 가능)</label>
+        <select id="channels" multiple size="2"><option value="threads" selected>Threads</option><option value="instagram" selected>Instagram</option></select>
+      </div>
+      <div class="actions">
+        <button class="primary" id="run-dry-run" type="button" disabled>드라이런 시나리오 구성</button>
+        <button id="download-scenario" type="button" disabled>시나리오 JSON 다운로드</button>
+      </div>
+      <pre id="dry-run-result" aria-live="polite" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+      <div id="success-record" hidden>
+        <p class="small-note">이 로컬 페이지는 게시 성공 여부를 확인할 수 없습니다. 실제 게시 성공을 확인한 경우에만 URL을 기록하세요.</p>
+        <div class="field"><label for="success-url">성공한 게시물 주소 (HTTPS)</label><input id="success-url" type="url" placeholder="https://…"></div>
+        <button class="primary" id="save-success" type="button">성공 URL과 사진·문안 기록</button>
+      </div>
+    </section>
+    <section class="history-panel" aria-labelledby="history-heading">
+      <h2 id="history-heading">성공 기록</h2>
+      <p class="small-note">기록은 이 브라우저의 로컬 저장소에만 저장됩니다.</p>
+      <div id="history"></div>
+      <button id="clear-history" type="button">성공 기록 전체 삭제</button>
+    </section>
+  </main>
+  <script>
+    const candidates = [
+      {
+        image: "images/step1_ai_intro.jpg",
+        title: "1. AI와 첫걸음",
+        caption: "AI를 처음 만날 때 필요한 건 거창한 기술보다, 내 경험을 질문으로 바꾸는 작은 시작입니다.\n\n현장에서 쌓아온 지혜를 하나씩 꺼내 AI와 함께 정리해 봅니다.\n\n#시니어AI #AI첫걸음 #경험을자산으로",
+      },
+      {
+        image: "images/step2_experience_db.jpg",
+        title: "2. 경험을 기록으로",
+        caption: "오랜 현장 경험에는 문제를 발견하고 해결해 온 과정이 담겨 있습니다.\n\n그 노하우를 기록하고 정리하면, 다음 세대와 나눌 수 있는 지식 자산이 됩니다.\n\n#현장경험 #지식자산 #함께배우기",
+      },
+      {
+        image: "images/step3_cross_mentoring.jpg",
+        title: "3. 세대가 함께 배우기",
+        caption: "경험에서 나오는 지혜와 새로운 기술이 만날 때 서로의 배움이 넓어집니다.\n\n가르치는 사람과 배우는 사람이 나뉘지 않는 협업을 시작해 봅니다.\n\n#세대협업 #리버스멘토링 #함께성장",
+      },
+      {
+        image: "images/step6_new_commute.jpg",
+        title: "4. 새로운 출근길",
+        caption: "배움은 끝이 아니라 다음 가능성으로 이어지는 출발점입니다.\n\n쌓아온 경험에 새로운 도구를 더해, 나만의 다음 역할을 천천히 그려봅니다.\n\n#새로운도전 #경험과AI #다시출근",
+      },
+    ];
+    const grid = document.getElementById("options");
+    const selectedCopy = document.getElementById("selected-copy");
+    const hint = document.getElementById("selection-hint");
+    const status = document.getElementById("status");
+    const copyButton = document.getElementById("copy");
+    const clearButton = document.getElementById("clear");
+    const STORAGE_KEY = "sns-caption-success-records-v1";
+    let selectedIndex = -1;
+    let currentScenario = null;
+
+    function readHistory() {
+      try {
+        const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(records) ? records.filter((item) => item && typeof item.image === "string" && typeof item.caption === "string" && typeof item.url === "string") : [];
+      } catch { return []; }
+    }
+
+    function renderHistory() {
+      const root = document.getElementById("history");
+      root.replaceChildren();
+      const records = readHistory();
+      if (!records.length) {
+        const empty = document.createElement("p");
+        empty.className = "small-note";
+        empty.textContent = "아직 성공 URL 기록이 없습니다.";
+        root.append(empty);
+        return;
+      }
+      records.forEach((record) => {
+        const row = document.createElement("article");
+        row.className = "history-item";
+        const title = document.createElement("strong");
+        title.textContent = record.title;
+        const image = document.createElement("p");
+        image.textContent = `사진: ${record.image}`;
+        const caption = document.createElement("p");
+        caption.textContent = record.caption;
+        const link = document.createElement("a");
+        link.href = record.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = record.url;
+        row.append(title, image, caption, link);
+        root.append(row);
+      });
+    }
+
+    function select(index) {
+      selectedIndex = index;
+      const item = candidates[index];
+      document.querySelectorAll(".option").forEach((card, cardIndex) => {
+        const active = cardIndex === index;
+        card.classList.toggle("selected", active);
+        card.querySelector(".choose").textContent = active ? "선택됨" : "이 이미지와 문안 선택";
+        card.querySelector(".choose").setAttribute("aria-pressed", String(active));
+      });
+      hint.textContent = `${item.title} · ${item.image}`;
+      selectedCopy.textContent = item.caption;
+      copyButton.disabled = false;
+      clearButton.disabled = false;
+      document.getElementById("run-dry-run").disabled = false;
+      currentScenario = null;
+      document.getElementById("download-scenario").disabled = true;
+      document.getElementById("success-record").hidden = true;
+      status.textContent = "선택만 기록했습니다. 파일·서버·SNS에는 저장하거나 게시하지 않았습니다.";
+    }
+
+    function renderCandidate(item, index) {
+      const card = document.createElement("article");
+      card.className = "option";
+      const img = document.createElement("img");
+      img.src = item.image;
+      img.alt = item.title + " 본문 이미지";
+      img.loading = "lazy";
+      img.onerror = () => { img.alt = item.title + " 이미지 파일을 불러오지 못했습니다."; };
+      const body = document.createElement("div");
+      body.className = "option-body";
+      const title = document.createElement("h2");
+      title.textContent = item.title;
+      const source = document.createElement("p");
+      source.className = "source";
+      source.textContent = `본문 이미지: ${item.image}`;
+      const caption = document.createElement("p");
+      caption.className = "caption";
+      caption.textContent = item.caption;
+      const count = document.createElement("p");
+      count.className = "count";
+      count.textContent = `문안 ${Array.from(item.caption).length.toLocaleString("ko-KR")}자`;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "choose";
+      button.textContent = "이 이미지와 문안 선택";
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => select(index));
+      body.append(title, source, caption, count, button);
+      card.append(img, body);
+      grid.append(card);
+    }
+
+    function renderCandidates() {
+      const usedImages = new Set(readHistory().map((record) => record.image.toLowerCase()));
+      grid.replaceChildren();
+      const available = candidates.map((item, index) => ({ item, index })).filter(({ item }) => !usedImages.has(item.image.toLowerCase()));
+      if (!available.length) {
+        const empty = document.createElement("p");
+        empty.className = "small-note";
+        empty.textContent = "모든 사진이 성공 기록에 있습니다. 기록을 삭제하면 다시 후보에 표시됩니다.";
+        grid.append(empty);
+        return;
+      }
+      available.forEach(({ item, index }) => renderCandidate(item, index));
+    }
+
+    function select(index) {
+      selectedIndex = index;
+      const item = candidates[index];
+      document.querySelectorAll(".option").forEach((card, cardIndex) => {
+        const active = cardIndex === index;
+        card.classList.toggle("selected", active);
+        card.querySelector(".choose").textContent = active ? "선택됨" : "이 이미지와 문안 선택";
+        card.querySelector(".choose").setAttribute("aria-pressed", String(active));
+      });
+      hint.textContent = `${item.title} · ${item.image}`;
+      selectedCopy.textContent = item.caption;
+      copyButton.disabled = false;
+      clearButton.disabled = false;
+      document.getElementById("run-dry-run").disabled = false;
+      currentScenario = null;
+      document.getElementById("download-scenario").disabled = true;
+      document.getElementById("success-record").hidden = true;
+      status.textContent = "선택만 기록했습니다. 파일·서버·SNS에는 저장하거나 게시하지 않았습니다.";
+    }
+
+    function renderCandidates() {
+      const usedImages = new Set(readHistory().map((record) => record.image.toLowerCase()));
+      grid.replaceChildren();
+      const available = candidates.map((item, index) => ({ item, index })).filter(({ item }) => !usedImages.has(item.image.toLowerCase()));
+      if (!available.length) {
+        const empty = document.createElement("p");
+        empty.className = "small-note";
+        empty.textContent = "모든 사진이 성공 기록에 있습니다. 기록을 삭제하면 다시 후보에 표시됩니다.";
+        grid.append(empty);
+        return;
+      }
+      available.forEach(({ item, index }) => renderCandidate(item, index));
+    }
+
+    copyButton.addEventListener("click", async () => {
+      if (selectedIndex < 0) return;
+      try {
+        await navigator.clipboard.writeText(candidates[selectedIndex].caption);
+        status.textContent = "선택 문안을 클립보드에 복사했습니다. 게시하지 않았습니다.";
+      } catch {
+        status.textContent = "이 브라우저에서는 자동 복사가 제한됩니다. 선택 문안을 직접 복사해 주세요.";
+      }
+    });
+
+    clearButton.addEventListener("click", () => {
+      selectedIndex = -1;
+      currentScenario = null;
+      document.querySelectorAll(".option").forEach((card) => {
+        card.classList.remove("selected");
+        card.querySelector(".choose").textContent = "이 이미지와 문안 선택";
+        card.querySelector(".choose").setAttribute("aria-pressed", "false");
+      });
+      hint.textContent = "후보 카드에서 선택 버튼을 눌러 주세요.";
+      selectedCopy.textContent = "";
+      copyButton.disabled = true;
+      clearButton.disabled = true;
+      document.getElementById("run-dry-run").disabled = true;
+      document.getElementById("download-scenario").disabled = true;
+      document.getElementById("success-record").hidden = true;
+      status.textContent = "선택을 해제했습니다.";
+    });
+
+    function buildScenario() {
+      if (selectedIndex < 0) throw new Error("먼저 이미지와 문안을 선택하세요.");
+      const channels = [...document.querySelectorAll("#channels option:checked")].map((option) => option.value);
+      if (!channels.length) throw new Error("대상 채널을 하나 이상 선택하세요.");
+      const item = candidates[selectedIndex];
+      const imageUrl = new URL(item.image, window.location.href);
+      const imagePath = decodeURIComponent(imageUrl.pathname).replace(/^\/(?:([A-Za-z]:\/))/, "$1");
+      const imageSize = { "images/step1_ai_intro.jpg": 79239, "images/step2_experience_db.jpg": 79337, "images/step3_cross_mentoring.jpg": 112139, "images/step6_new_commute.jpg": 98558 }[item.image];
+      const mode = document.querySelector('input[name="publish-mode"]:checked').value;
+      const scenario = {
+        nickname: "9hyuni",
+        content: item.caption,
+        channels,
+        mode,
+        threads_token_configured: false,
+        instagram_token_configured: false,
+        image: { path: imagePath, bytes: imageSize, width: imageUrl ? document.querySelector(`.option img[src="${item.image}"]`)?.naturalWidth : undefined, height: document.querySelector(`.option img[src="${item.image}"]`)?.naturalHeight, content_type: "image/jpeg" },
+      };
+      if (mode === "scheduled") {
+        const localValue = document.getElementById("schedule-at").value;
+        if (!localValue) throw new Error("예약 일시를 입력하세요.");
+        scenario.scheduled_at = new Date(localValue).toISOString();
+      }
+      return scenario;
+    }
+
+    document.querySelectorAll('input[name="publish-mode"]').forEach((radio) => radio.addEventListener("change", () => {
+      document.getElementById("schedule-field").hidden = document.querySelector('input[name="publish-mode"]:checked').value !== "scheduled";
+      currentScenario = null;
+      document.getElementById("success-record").hidden = true;
+      document.getElementById("download-scenario").disabled = true;
+    }));
+
+    document.getElementById("run-dry-run").addEventListener("click", () => {
+      try {
+        currentScenario = buildScenario();
+        document.getElementById("dry-run-result").textContent = "드라이런 입력 시나리오 (실제 발행하지 않음)\n" + JSON.stringify(currentScenario, null, 2);
+        document.getElementById("success-record").hidden = false;
+        document.getElementById("download-scenario").disabled = false;
+        status.textContent = "시나리오를 만들었습니다. 이 화면에서는 게시 또는 예약을 실행하지 않았습니다.";
+      } catch (error) {
+        status.textContent = error instanceof Error ? error.message : "시나리오 생성 오류";
+      }
+    });
+
+    document.getElementById("download-scenario").addEventListener("click", () => {
+      if (!currentScenario) return;
+      const blob = new Blob([JSON.stringify(currentScenario, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "sns-post-dry-run.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("save-success").addEventListener("click", () => {
+      if (selectedIndex < 0 || !currentScenario) { status.textContent = "먼저 시나리오를 구성하세요."; return; }
+      let parsedUrl;
+      try { parsedUrl = new URL(document.getElementById("success-url").value.trim()); }
+      catch { status.textContent = "유효한 HTTPS 성공 주소를 입력하세요."; return; }
+      if (parsedUrl.protocol !== "https:") { status.textContent = "성공 주소는 HTTPS여야 합니다."; return; }
+      const item = candidates[selectedIndex];
+      const records = readHistory();
+      if (records.some((record) => record.image.toLowerCase() === item.image.toLowerCase())) {
+        status.textContent = "이 사진은 이미 성공 기록에 있습니다.";
+        return;
+      }
+      records.unshift({ title: item.title, image: item.image, caption: item.caption, url: parsedUrl.href, mode: currentScenario.mode, scheduled_at: currentScenario.scheduled_at || null, saved_at: new Date().toISOString() });
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); }
+      catch { status.textContent = "브라우저 로컬 저장소에 기록하지 못했습니다."; return; }
+      selectedIndex = -1;
+      currentScenario = null;
+      selectedCopy.textContent = "";
+      hint.textContent = "성공 URL과 사진·문안을 기록했습니다.";
+      copyButton.disabled = true;
+      clearButton.disabled = true;
+      document.getElementById("run-dry-run").disabled = true;
+      document.getElementById("download-scenario").disabled = true;
+      document.getElementById("success-record").hidden = true;
+      status.textContent = "성공 기록을 저장했습니다. 해당 사진은 다음 문안 후보에서 제외됩니다.";
+      renderHistory();
+      renderCandidates();
+    });
+
+    document.getElementById("clear-history").addEventListener("click", () => {
+      if (!window.confirm("성공 기록을 모두 삭제할까요? 삭제하면 해당 사진이 다시 후보에 포함됩니다.")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+      renderCandidates();
+      status.textContent = "성공 기록을 삭제했습니다.";
+    });
+
+    renderHistory();
+    renderCandidates();
+  </script>
+</body>
+</html>
