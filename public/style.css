@@ -295,6 +295,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 /* Responsive Media Queries */
 @media (max-width: 1080px) {
+  .site-header { gap: 10px; padding-right: 14px; padding-left: 14px; }
+  .brand { gap: 8px; }
+  .brand-mark { width: 40px; height: 40px; }
+  .brand-mark svg { width: 24px; height: 24px; }
+  .brand-copy strong { font-size: 15px; }
+  .brand-copy strong em { font-size: 12px; }
+  .brand-copy small { display: none; }
+  .main-nav { display: none; order: 4; flex-basis: 100%; flex-direction: column; align-items: stretch; gap: 4px; padding: 10px 0 4px; border-top: 1px solid #e2e8f0; margin-top: 6px; }
+  .main-nav.is-open { display: flex; }
+  .main-nav a { padding: 9px 12px; border-radius: 6px; background: #f8fafc; font-size: 14px; text-align: left; }
+  .main-nav a:hover { background: #fff8eb; color: #b45309; }
+  .main-nav a::after { display: none; }
+  .nav-toggle { display: grid; }
+  .auth-open { min-height: 38px; padding: 6px 11px; font-size: 12px; border-radius: 6px; }
+
   .hero { grid-template-columns: 1fr; }
   .opportunity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .movie-link-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -310,16 +325,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .brand-copy strong { font-size: 15px; }
   .brand-copy strong em { font-size: 12px; }
   .brand-copy small { display: none; }
-  .nav-toggle { display: grid; }
-  
-  .main-nav { display: none; order: 4; flex-basis: 100%; flex-direction: column; align-items: stretch; gap: 4px; padding: 10px 0 4px; border-top: 1px solid #e2e8f0; margin-top: 6px; }
-  .main-nav.is-open { display: flex; }
-  .main-nav a { padding: 9px 12px; border-radius: 6px; background: #f8fafc; font-size: 14px; text-align: left; }
-  .main-nav a:hover { background: #fff8eb; color: #b45309; }
-  .main-nav a::after { display: none; }
-  
-  .auth-open { min-height: 38px; padding: 6px 11px; font-size: 12px; border-radius: 6px; }
-  
   /* 로그인 후 모바일 헤더 대폭 최소화 (Ultra-Compact) */
   .site-header.is-logged-in { min-height: 44px; padding: 5px 10px; top: 4px; background: #fffffffa; }
   .site-header.is-logged-in .brand-copy strong { font-size: 13px; }

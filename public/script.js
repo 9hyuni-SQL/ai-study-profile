@@ -898,7 +898,7 @@ if (navToggle && mainNav) {
   });
   mainNav.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
-      if (window.innerWidth <= 860) {
+      if (window.innerWidth <= 1080) {
         mainNav.classList.remove("is-open");
         navToggle.setAttribute("aria-expanded", "false");
         navToggle.classList.remove("is-active");
