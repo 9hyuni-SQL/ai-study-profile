@@ -273,6 +273,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .verification-tool strong { color: #166534; }
 .verification-answer { background: #fffbeb; border-color: #fde68a; }
 .verification-answer strong { color: #92400e; }
+.inline-question-edit-form { display: grid; gap: 10px; margin-top: 10px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; }
+.inline-edit-field { display: grid; gap: 4px; }
+.inline-edit-label { color: #1e293b; font-size: 13px; font-weight: 750; }
+.inline-question-edit-form input, .inline-question-edit-form textarea, .inline-question-edit-form select { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; font-size: 14px; }
+.inline-edit-actions { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.inline-cancel-button { min-height: 40px; padding: 6px 14px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #334155; font-size: 13px; font-weight: 750; cursor: pointer; }
 
 .comments-panel { margin-top: 14px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
 .comments-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }

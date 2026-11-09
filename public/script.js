@@ -369,7 +369,183 @@ const deleteOwnedContent = async (path, element, statusHandler) => {
   }
 };
 
-const editQuestion = async (question) => {
+const parseVerificationBody = (bodyText = "") => {
+  const match = String(bodyText).match(/^사용한 AI: ([^\n]+)\n\n내 질문:\n([\s\S]*?)\n\nAI 답변:\n([\s\S]*?)\n\n함께 확인할 점:\n([\s\S]*)$/);
+  if (!match) return null;
+  return {
+    aiTool: match[1],
+    promptText: match[2],
+    answerText: match[3],
+    checkText: match[4],
+  };
+};
+
+const editQuestion = (question, cardElement) => {
+  if (!cardElement) return;
+  const existingForm = cardElement.querySelector(".inline-question-edit-form");
+  if (existingForm) {
+    existingForm.querySelector("input, textarea, select")?.focus();
+    return;
+  }
+
+  const questionBody = question.body ?? question.content.split("\n").slice(1).join("\n");
+  const parsed = parseVerificationBody(questionBody);
+  const detailsContainer = cardElement.querySelector(".question-details");
+  const actionsContainer = cardElement.querySelector(".owned-content-actions");
+
+  const form = document.createElement("form");
+  form.className = "inline-question-edit-form";
+
+  const makeField = (labelText, control) => {
+    const wrapper = document.createElement("label");
+    wrapper.className = "inline-edit-field";
+    const span = document.createElement("span");
+    span.className = "inline-edit-label";
+    span.textContent = labelText;
+    wrapper.append(span, control);
+    return wrapper;
+  };
+
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.name = "title";
+  titleInput.maxLength = 120;
+  titleInput.required = true;
+  titleInput.value = question.title || "";
+  form.append(makeField("검증할 작업·주제", titleInput));
+
+  let aiToolSelect = null;
+  let promptInput = null;
+  let answerInput = null;
+  let checkInput = null;
+  let rawContentInput = null;
+
+  if (parsed) {
+    aiToolSelect = document.createElement("select");
+    aiToolSelect.name = "ai-tool";
+    aiToolSelect.required = true;
+    const toolOptions = ["기호의 현장 수첩 AI 변환기", "ChatGPT", "Gemini", "Microsoft Copilot", "Claude", "기타 / 잘 모르겠어요"];
+    if (!toolOptions.includes(parsed.aiTool)) toolOptions.unshift(parsed.aiTool);
+    for (const optText of toolOptions) {
+      const opt = document.createElement("option");
+      opt.value = optText;
+      opt.textContent = optText;
+      if (optText === parsed.aiTool) opt.selected = true;
+      aiToolSelect.append(opt);
+    }
+
+    promptInput = document.createElement("textarea");
+    promptInput.name = "prompt";
+    promptInput.rows = 3;
+    promptInput.maxLength = 450;
+    promptInput.required = true;
+    promptInput.value = parsed.promptText;
+
+    answerInput = document.createElement("textarea");
+    answerInput.name = "answer";
+    answerInput.rows = 4;
+    answerInput.maxLength = 1000;
+    answerInput.required = true;
+    answerInput.value = parsed.answerText;
+
+    checkInput = document.createElement("textarea");
+    checkInput.name = "check";
+    checkInput.rows = 3;
+    checkInput.maxLength = 350;
+    checkInput.required = true;
+    checkInput.value = parsed.checkText;
+
+    form.append(
+      makeField("사용한 AI (초안 출처)", aiToolSelect),
+      makeField("내 질문 (현장 상황과 원래 메모)", promptInput),
+      makeField("AI 답변 (AI가 정리한 SOP 초안)", answerInput),
+      makeField("함께 확인할 점", checkInput),
+    );
+  } else {
+    rawContentInput = document.createElement("textarea");
+    rawContentInput.name = "content";
+    rawContentInput.rows = 6;
+    rawContentInput.maxLength = 2000;
+    rawContentInput.required = true;
+    rawContentInput.value = questionBody;
+    form.append(makeField("질문 내용", rawContentInput));
+  }
+
+  const buttonRow = document.createElement("div");
+  buttonRow.className = "inline-edit-actions";
+  const saveButton = document.createElement("button");
+  saveButton.type = "submit";
+  saveButton.className = "submit-post inline-save-button";
+  saveButton.textContent = "수정 저장";
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.className = "cancel-reply inline-cancel-button";
+  cancelButton.textContent = "취소";
+
+  const closeEditor = () => {
+    form.remove();
+    if (detailsContainer) detailsContainer.hidden = false;
+    if (actionsContainer) actionsContainer.hidden = false;
+  };
+
+  cancelButton.addEventListener("click", closeEditor);
+  buttonRow.append(saveButton, cancelButton);
+  form.append(buttonRow);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const title = titleInput.value.replace(/[\r\n]+/g, " ").trim();
+    const content = parsed
+      ? buildVerificationContent({
+          aiTool: aiToolSelect.value.trim(),
+          promptText: promptInput.value.trim(),
+          answerText: answerInput.value.trim(),
+          checkText: checkInput.value.trim(),
+        })
+      : rawContentInput.value.trim();
+
+    if (!title || !content) {
+      setQuestionStatus("제목과 내용을 모두 입력해 주세요.", true);
+      return;
+    }
+    if (content.length > 2000) {
+      setQuestionStatus("전체 내용을 2,000자 이내로 줄여주세요.", true);
+      return;
+    }
+
+    saveButton.disabled = true;
+    cancelButton.disabled = true;
+    try {
+      const response = await fetch(`/api/questions/${question.id}`, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "질문을 수정하지 못했어요.");
+      setQuestionStatus("질문을 수정했습니다.");
+      await loadQuestions({ reset: false });
+    } catch (error) {
+      setQuestionStatus(error.message || "질문을 수정하지 못했어요.", true);
+      saveButton.disabled = false;
+      cancelButton.disabled = false;
+    }
+  });
+
+  if (detailsContainer) detailsContainer.hidden = true;
+  if (actionsContainer) actionsContainer.hidden = true;
+  if (actionsContainer) {
+    actionsContainer.after(form);
+  } else if (detailsContainer) {
+    detailsContainer.after(form);
+  } else {
+    cardElement.querySelector(".post-body")?.append(form);
+  }
+  titleInput.focus();
+};
+
+const unusedPromptQuestionEdit = async (question) => {
   const title = window.prompt("질문 제목을 수정해 주세요.", question.title);
   if (title === null) return;
   const content = window.prompt("질문 내용을 수정해 주세요.", question.body || "");
@@ -668,7 +844,7 @@ const createQuestionCard = (question) => {
     const edit = document.createElement("button");
     edit.type = "button";
     edit.textContent = "질문 수정";
-    edit.addEventListener("click", () => editQuestion(question));
+    edit.addEventListener("click", () => editQuestion(question, item));
     const remove = document.createElement("button");
     remove.type = "button";
     remove.textContent = "질문 삭제";
