@@ -1,60 +1,98 @@
 # SENIOR AI 2.0 · AI 인생동행
 
-**배포된 서비스는 [ai-study-profile.9hyuni.workers.dev](https://ai-study-profile.9hyuni.workers.dev)에서 확인할 수 있고, 로컬 개발·테스트는 Cloudflare Wrangler로 실행합니다.** 이 프로젝트는 시니어의 현장 경험을 기록하고 세대 간 학습과 협업을 돕는 한국어 웹 플랫폼입니다.
+배포된 서비스는 [ai-study-profile.9hyuni.workers.dev](https://ai-study-profile.9hyuni.workers.dev)에서 확인할 수 있습니다. 시니어의 현장 경험을 기록하고 세대 간 학습과 협업을 돕는 웹 플랫폼이며, 서버리스 엣지 환경에서 안정적으로 동작합니다.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Cloudflare%20Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://ai-study-profile.9hyuni.workers.dev)
 [![GitHub License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-## 개발 방법
+---
 
-**배포 환경과 같은 Cloudflare Worker·D1 구성을 로컬에서 시험하려면 Wrangler를 사용합니다.** 프로젝트 루트에서 Node.js 20 이상과 npm을 준비하세요.
+## 서비스 배포 링크
+
+운영 중인 서비스 접속 주소는 다음과 같습니다. Cloudflare 글로벌 엣지 네트워크를 통해 SSL 암호화 및 무중단 서빙이 적용되어 있습니다.
+
+- **프로덕션 서비스 주소**: [https://ai-study-profile.9hyuni.workers.dev](https://ai-study-profile.9hyuni.workers.dev)
+- **API 및 정적 자산 경로**: Cloudflare Workers + Workers Static Assets (`public/`) 통합 서빙
+
+---
+
+## 로컬 개발 및 테스트 방법
+
+로컬 개발 환경은 Cloudflare Wrangler CLI를 사용해 프로덕션과 동일한 Workers 및 D1 환경으로 구동합니다. Node.js 20 이상 버전이 필요합니다.
+
+PowerShell 터미널에서 아래 명령을 차례대로 실행합니다.
 
 ```powershell
-npm install --global wrangler
+# 1. 로컬 D1 데이터베이스 마이그레이션 적용
 npx wrangler d1 migrations apply ai-study-profile-db --local --config .\wrangler.jsonc
+
+# 2. 로컬 테스트용 세션 비밀키 생성 및 .dev.vars 등록
 $secret = node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 Set-Content -Path .dev.vars -Value "SESSION_SECRET=$secret" -Encoding ascii
+
+# 3. 로컬 개발 서버 실행
 npx wrangler dev
 ```
 
-로컬 사이트는 기본적으로 `http://localhost:8787/`에서 열립니다. `.dev.vars`는 개발용 비밀값 파일이며 Git에 커밋하지 마세요. 서버를 종료하려면 `Ctrl+C`를 누르세요.
+서버가 구동되면 브라우저에서 `http://localhost:8787/`로 접속합니다. 로컬 전용 설정 파일인 `.dev.vars`는 저장소에 커밋되지 않도록 주의합니다.
 
-## 배포 방법
-
-**Cloudflare 배포는 먼저 원격 D1 마이그레이션을 적용하고, 세션 비밀값을 Secret으로 등록한 뒤 Wrangler로 배포합니다.** `wrangler.jsonc`의 D1 바인딩과 Cloudflare 계정 접근 권한을 확인하세요.
+단위 및 E2E 무결성 검증은 아래 스크립트로 실행합니다.
 
 ```powershell
+node tests/issue9-security-headers.test.js
+node tests/issue8-pagination.test.js
+node tests/lazy-comments.test.js
+node tests/issue10-question-title.test.js
+```
+
+---
+
+## 클라우드 배포 방법
+
+배포는 Cloudflare D1 원격 스키마를 갱신한 뒤 Worker 코드를 프로덕션에 반영하는 순서로 진행합니다. `wrangler.jsonc`에 정의된 바인딩 정보와 Cloudflare 계정 권한을 먼저 점검합니다.
+
+```powershell
+# 1. 원격 프로덕션 D1 데이터베이스 마이그레이션 적용
 npx wrangler d1 migrations apply ai-study-profile-db --remote --config .\wrangler.jsonc
+
+# 2. 프로덕션 환경 세션 암호화 키 등록 (최초 1회 또는 키 갱신 시)
 npx wrangler secret put SESSION_SECRET
+
+# 3. 프로덕션 엣지 네트워크 배포
 npx wrangler deploy
 ```
 
-Secret 프롬프트에는 예측하기 어려운 긴 임의 문자열을 입력하세요. 실제 비밀값을 채팅, 소스 코드, README 또는 Git에 기록하지 마세요. 배포 후 [라이브 사이트](https://ai-study-profile.9hyuni.workers.dev)를 확인하세요.
+배포가 끝나면 [운영 사이트](https://ai-study-profile.9hyuni.workers.dev)에 접속해 HTTP 200 응답과 보안 헤더(HSTS, CSP, X-Frame-Options)가 정상 적용되었는지 확인합니다.
 
-## 배포 파일 구성
+---
 
-**Cloudflare Workers는 `wrangler.jsonc`의 `assets.directory`에 지정된 `public/`을 정적 자산 정본으로 배포합니다.** 프런트엔드는 `public/index.html`, `public/style.css`, `public/script.js` 및 `public/images/`의 자산으로 구성됩니다. Worker API는 `src/worker.js`, D1 스키마는 `migrations/`에 있습니다.
+## 프로젝트 아키텍처 및 파일 구성
 
-과거 로컬 프런트엔드와 실행기 `server.py`, `serve.ps1`은 변경 이력 보존을 위해 `legacy/`에 있습니다. 이 파일들은 현재 개발·배포에 사용하지 않습니다. 정적 자산의 중복 루트 사본은 제거했습니다.
+정적 자산은 `public/` 디렉터리를 단일 정본으로 관리하며, API와 비즈니스 로직은 `src/worker.js`에서 처리합니다.
 
-## 핵심 기능
+- **`src/worker.js`**: 사용자 인증, 세션 쿠키 발급, D1 질의, 보안 헤더 및 댓글 일괄 처리 API
+- **`public/`**: 프런트엔드 정적 웹 리소스 정본
+  - `index.html`: 메인 마크업 및 시맨틱 레이아웃
+  - `style.css`: 시니어 친화적 고대비 UI, 반응형 그리드 및 스켈레톤 로딩 애니메이션
+  - `script.js`: 비동기 API 통신, 무한 스크롤 더보기 및 번호 페이지네이션 제어
+  - `images/`: LCP 최적화된 시각 자료
+- **`migrations/`**: D1 관계형 데이터베이스 스키마 및 데이터 마이그레이션 SQL
+- **`tests/`**: 보안 헤더, 페이지네이션, 지연 로딩, 제목 분리 단위 테스트 스위트
 
-**이 서비스는 시니어의 경험을 정리하고 세대 간 학습과 현장 지혜 검토를 돕습니다.**
+---
 
-- 영화 「인턴」에서 영감을 얻은 시니어·청년 협업 소개와 6단계 AI 학습 로드맵
-- 현장 메모를 SOP 형식으로 정리하는 브라우저 기반 변환 시뮬레이터
-- 경험 공유 커뮤니티와 현장 지혜 검증소
-- Cloudflare Worker와 D1 기반 로그인, 게시글 및 댓글 기능
+## 주요 기능 및 UX 최적화
 
-SOP 변환기는 브라우저에서 입력을 구조화하는 시뮬레이터이며 실제 생성형 AI API를 호출하지 않습니다. 결과는 검토용 초안이므로 실제 작업 전 사내 기준을 확인해야 합니다.
+사용자 접근성과 응답 속도를 높이기 위해 다음과 같은 최적화 기법을 적용했습니다.
 
-## 기술 스택
+- **맞춤형 목록 탐색 방식 분리**:
+  - **가입인사 게시판**: 피드 탐색 흐름을 유지할 수 있도록 10건 단위 '더보기(무한 스크롤형)' 방식 적용
+  - **지혜 검증소 게시판**: 특정 글을 정확히 찾아갈 수 있도록 직관적인 '번호 페이지네이션' 방식 적용
+- **로딩 스켈레톤 UI**: 네트워크 지연 구간에서 레이아웃 이동(CLS)을 방지하고 시각적 안정감을 주는 쉬머 애니메이션 적용
+- **댓글 지연 로딩 (Lazy Load)**: 불필요한 초기 데이터 요청을 막고 사용자가 '댓글 열기'를 누를 때만 동적으로 로드
+- **클라우드플레어 보안 가드레일**: 엄격한 Content Security Policy(CSP), HSTS, CSRF 방어용 HttpOnly 세션 쿠키 체계 구축
 
-**프런트엔드는 바닐라 웹 기술로, 서버와 데이터는 Cloudflare Workers와 D1으로 구성했습니다.**
-
-- HTML5, CSS3, Vanilla JavaScript
-- Cloudflare Workers, Workers Static Assets, Cloudflare D1
-- Wrangler CLI, D1 SQL migrations, Node.js 20 이상
+---
 
 ## 분석 및 전환 측정
 
@@ -70,4 +108,4 @@ Google Tag Manager 컨테이너에는 `site_conversion` Custom Event Trigger를 
 
 ## 기여 및 라이선스
 
-**버그 제보와 개선 제안은 [GitHub Issues](https://github.com/9hyuni-SQL/ai-study-profile/issues)에 남겨 주세요.** 이 저장소는 MIT License로 배포되며 자세한 내용은 [`LICENSE`](LICENSE)를 확인하세요.
+버그 제보와 기술적인 개선 제안은 [GitHub Issues](https://github.com/9hyuni-SQL/ai-study-profile/issues)를 이용해 주시기 바랍니다. 이 프로젝트는 MIT 라이선스에 따라 자유롭게 수정 및 배포할 수 있습니다. 자세한 내용은 [`LICENSE`](LICENSE) 파일을 참조하세요.
